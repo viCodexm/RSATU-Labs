@@ -4,6 +4,8 @@
 using namespace std;
 
 string to_straight_code(int val) {
+    if (val == -0)
+        return "1.0";
     string s;
     int n = abs(val);
     while (n > 0) {
@@ -18,6 +20,9 @@ string to_straight_code(int val) {
     return s;
 }
 string to_reverse_code(int val) {
+    if (val == -0)
+        return "Значения '-0' в данном коде не существует";
+    
     string s = to_straight_code(val);
     if (val >= 0)
         return s;
@@ -30,6 +35,9 @@ string to_reverse_code(int val) {
     return s;
 }
 string to_extended_code(int val) {
+    if (val == -0)
+        return "Значения '-0' в данном коде не существует";
+
     string s = to_reverse_code(val);
     if (val >= 0)
         return s;
@@ -48,6 +56,9 @@ string to_extended_code(int val) {
     return s;
 }
 string to_mod_extended_code(int val) {
+    if (val == -0)
+        return "Значения '-0' в данном коде не существует";
+
     string s = to_extended_code(val);
     if (val >= 0) return '0' + s;
     return '1' + s;
@@ -66,17 +77,50 @@ int binary_to_int(string code) {
 }
 
 // still in development
-/*
-string mod_ex_add(string a, string b) {
-    //int sign = ((a[0] == '1' && b[0] != '1') || (a[0] != '1' && b[0] == '1')) ? -1 : 1;
 
-
+void make_same_size(string& a, string& b) {
     while (a.size() < b.size())
         a.push_back('0');
     while (b.size() < a.size())
         b.push_back('0');
-
-    for (int i = a.size() - 1; i >= 2; i--)
-        if (a[i])
 }
-*/
+
+string mod_ex_add(int ai, int bi) {
+    //int sign = ((a[0] == '1' && b[0] != '1') || (a[0] != '1' && b[0] == '1')) ? -1 : 1;
+    
+    string _a = to_straight_code(ai);
+    string _b = to_straight_code(bi);
+
+    string a = _a.substr(0, 3) + '0' + _a.substr(3, _a.size() - 3);
+    string b = _b.substr(0, 3) + '0' + _b.substr(3, _b.size() - 3);
+
+    make_same_size(a, b);
+
+    int carry = 0;
+    for (int i = a.size() - 1; i >= 0; --i) {
+        if (a[i] == '.')
+            continue;
+        
+        int count = ((a[i] == '1') + (b[i] == '1')) + min(1, carry);
+
+        switch (count) {
+        case 0:
+            break;
+        case 1:
+            if (carry)
+                carry = false;
+            a[i] = '1';
+            break;
+        case 2:
+            carry = true;
+            a[i] = '0';
+            break;
+        case 3:
+            carry = true;
+            a[i] = '1';
+            break;
+        }
+    }
+    return a;
+}
+/**/
