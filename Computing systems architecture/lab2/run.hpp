@@ -59,20 +59,20 @@ p3:
          << "1 A+B\n2 A-B\n3 -A+B\n4 -A-B\n";
 
 p4:
-    if (!int_input("M = ", m) || (m < 1 && 4 < m)) {
+    if (!int_input("M = ", m) || m < 1 || 4 < m) {
         cout << "\nОшибка ввода номера выполняемой операции\n\n";
         goto p3;
     }
     if (m != A_minus_B) {
-        cout << "\nОперация " << m << "не реализована\n\n";
+        cout << "\nОперация " << m << " не реализована\n\n";
         goto p3;
     }
 
 p5:
-    cout << "A-B\n"
+    cout << "\nA-B\n"
         << "A = " << to_mod_extended_code(a) << "\n"
         << "B = " << to_mod_extended_code(b) << "\n"
-        << string(0, 10, '-') << "\n"
+        << string(4 + to_mod_extended_code(b).size(), '-') << "\n"
         << "результат:\n"
         << "ОК = \n"
         << "ПК = \n"
@@ -83,7 +83,7 @@ p5:
 
 p6:
     cout << "Изменить номер выполняемой операции?\n";
-    response = char_input("(Y - да / N - нет)");
+    response = char_input("(Y - да / N - нет)\n");
 
     switch (response)
     {
@@ -92,13 +92,13 @@ p6:
     case 'N':
         goto p7;
     default:
-        cout << "Ошибка запросов на повоторный ввод номера операции";
+        cout << "Ошибка запросов на повоторный ввод номера операции\n";
         goto p6;
     }
 
 p7:
     cout << "Ввести новое значение заданных чисел?\n";
-    response = char_input("(Y - да / N - нет)");
+    response = char_input("(Y - да / N - нет)\n");
 
     switch (response)
     {
@@ -107,7 +107,7 @@ p7:
     case 'N':
         break;
     default:
-        cout << "Ошибка запросов на ввод новых заданных чисел";
+        cout << "Ошибка запросов на ввод новых заданных чисел\n";
         goto p7;
     }
     return 0;
