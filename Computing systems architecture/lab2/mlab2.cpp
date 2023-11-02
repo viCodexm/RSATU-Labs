@@ -31,7 +31,7 @@ void test_add(int a, int b) {
 
 int main() {
     
-    test_add(14, 75);
+    //test_add(14, 75);
     
- //   return run();
+    return run();
 }
