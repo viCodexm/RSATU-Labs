@@ -91,8 +91,8 @@ string mod_ex_add(int ai, int bi) {
     string _a = to_straight_code(ai);
     string _b = to_straight_code(bi);
 
-    string a = _a.substr(0, 3) + '0' + _a.substr(3, _a.size() - 3);
-    string b = _b.substr(0, 3) + '0' + _b.substr(3, _b.size() - 3);
+    string a = _a.substr(0, 2) + '0' + _a.substr(3, _a.size() - 2);
+    string b = _b.substr(0, 2) + '0' + _b.substr(3, _b.size() - 2);
 
     make_same_size(a, b);
 
