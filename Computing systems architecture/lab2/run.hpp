@@ -39,9 +39,9 @@ void check(string code) {
 }
 
 int run() {
-    int a, b, m, code_type;
+    int a, b, m, code_type, i_ans;
     char response;
-    string ans;
+    string stra, strb, str_ans;
     bool f1, f2;
 p1:
     cout << "Введите два целых числа\n";
@@ -69,17 +69,22 @@ p4:
     }
 
 p5:
+    stra = to_mod_extended_code(a, a < 0);
+    strb = to_mod_extended_code(b, b < 0);
+    make_same_size(stra, strb, 3);
+    //str_ans = mod_ex_add(a, b);
+    i_ans = a - b;//binary_to_int(str_ans);
     cout << "\nA-B\n"
-        << "A = " << to_mod_extended_code(a) << "\n"
-        << "B = " << to_mod_extended_code(b) << "\n"
-        << string(4 + to_mod_extended_code(b).size(), '-') << "\n"
+        << "A = " << stra << "\n"
+        << "B = " << strb << "\n"
+        << string(4 + strb.size(), '-') << "\n"
         << "результат:\n"
-        << "ОК = \n"
-        << "ПК = \n"
-        << "ДК = \n"
-        << "МДК = \n"
-        << "R(2) = \n"
-        << "R(10) = \n";
+        << "ПК = " << to_straight_code(i_ans, i_ans < 0) << "\n"
+        << "ОК = " << to_reverse_code(i_ans, i_ans < 0) << "\n"
+        << "ДК = " << to_extended_code(i_ans, i_ans < 0) << "\n"
+        << "МДК = " << to_mod_extended_code(i_ans, i_ans < 0) << "\n"
+        << "R(2) = " << to_straight_code(i_ans, i_ans < 0) << "\n" // **** what should be here?
+        << "R(10) = " << i_ans << "\n";
 
 p6:
     cout << "Изменить номер выполняемой операции?\n";
