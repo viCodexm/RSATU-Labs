@@ -3,6 +3,8 @@
 
 using namespace std;
 
+#define MINUS_ZERO_DOESNT_EXIST "Значения '-0' в данном коде не существует"
+
 string to_straight_code(int val, bool negative) {
     if (val == 0)
         return negative ? "1.0" : "0.0";
@@ -22,7 +24,7 @@ string to_straight_code(int val, bool negative) {
 }
 string to_reverse_code(int val, bool negative) {
     if (val == 0 && negative)
-        return "Значения '-0' в данном коде не существует";
+        return MINUS_ZERO_DOESNT_EXIST;
     
     string s = to_straight_code(val, negative);
     if (val >= 0)
@@ -37,7 +39,7 @@ string to_reverse_code(int val, bool negative) {
 }
 string to_extended_code(int val, bool negative) {
     if (val == 0 && negative)
-        return "Значения '-0' в данном коде не существует";
+        return MINUS_ZERO_DOESNT_EXIST;
 
     string s = to_reverse_code(val, negative);
     if (val >= 0)
@@ -58,7 +60,7 @@ string to_extended_code(int val, bool negative) {
 }
 string to_mod_extended_code(int val, bool negative) {
     if (val == 0 && negative)
-        return "Значения '-0' в данном коде не существует";
+        return MINUS_ZERO_DOESNT_EXIST;
 
     string s = to_extended_code(val, negative);
     if (val >= 0) return '0' + s;

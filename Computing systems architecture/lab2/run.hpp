@@ -5,6 +5,18 @@
 using namespace std;
 
 #define A_minus_B   2
+#define MINUS_ZERO_DOESNT_EXIST "Значения '-0' в данном коде не существует"
+
+int _stoi(string str, int* p_value) {
+    try {
+        *p_value = stoi(str);
+        return 0;
+    }
+    catch (exception& e) {
+        return -1;
+    }
+    return 0;
+}
 
 bool int_input(string message, int& ans) {
     bool f = false;
@@ -33,7 +45,7 @@ char char_input(string message) {
     return ans;
 }
 void check(string code) {
-    if (code == "Значения '-0' в данном коде не существует")
+    if (code == MINUS_ZERO_DOESNT_EXIST)
         cout << code << "\n";
     else cout << "C = " << code << "\n";
 }
@@ -45,11 +57,11 @@ int run() {
     bool f1, f2;
 p1:
     cout << "Введите два целых числа\n";
-    f1 = int_input("A = ", a);
-    f2 = int_input("B = ", b);
-
+    cout << "A = "; getline(cin, stra);
+    cout << "B = "; getline(cin, strb);
+    
 p2:
-    if (!f1 || !f2) {
+    if (_stoi(stra, &a) != 0 || _stoi(strb, &b) != 0)  {
         cout << "\nОшибка ввода чисел\n\n";
         goto p1;
     }
@@ -69,9 +81,16 @@ p4:
     }
 
 p5:
-    stra = to_mod_extended_code(a, a < 0);
-    strb = to_mod_extended_code(b, b < 0);
-    make_same_size(stra, strb, 3);
+    if (stra[0] == '-')
+        stra = MINUS_ZERO_DOESNT_EXIST;
+    else stra = to_mod_extended_code(a, a < 0);
+
+    if (strb[0] == '-')
+        strb = MINUS_ZERO_DOESNT_EXIST;
+    else strb = to_mod_extended_code(b, b < 0);
+
+    if (stra != MINUS_ZERO_DOESNT_EXIST && strb != MINUS_ZERO_DOESNT_EXIST)
+        make_same_size(stra, strb, 3);
     //str_ans = mod_ex_add(a, b);
     i_ans = a - b;//binary_to_int(str_ans);
     cout << "\nA-B\n"
