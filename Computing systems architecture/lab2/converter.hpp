@@ -5,7 +5,7 @@ using namespace std;
 
 #define MINUS_ZERO_DOESNT_EXIST "Значения '-0' в данном коде не существует"
 
-string to_straight_code(int val, bool negative) {
+string to_straight_code(int val, bool negative, int body_size) {
     if (val == 0)
         return negative ? "1.0" : "0.0";
 
@@ -15,18 +15,23 @@ string to_straight_code(int val, bool negative) {
         s += to_string(n % 2);
         n /= 2;
     }
-    if (val >= 0)
-        s += ".0";
-    else s += ".1";
-
     reverse(s.begin(), s.end());
+
+    if (s.size() >= body_size) {
+        return (val >= 0) ? "0." + s : "1.0" + s;
+    }
+    else {
+        int add = body_size - s.size() - 2;
+        return (val >= 0) ? "0." + string(add, '0') + s : "1." + string(add, '0') + s;
+    }
+
     return s;
 }
-string to_reverse_code(int val, bool negative) {
+string to_reverse_code(int val, bool negative, int body_size) {
     if (val == 0 && negative)
         return MINUS_ZERO_DOESNT_EXIST;
     
-    string s = to_straight_code(val, negative);
+    string s = to_straight_code(val, negative, body_size);
     if (val >= 0)
         return s;
 
@@ -37,11 +42,11 @@ string to_reverse_code(int val, bool negative) {
             s[i] = '1';
     return s;
 }
-string to_extended_code(int val, bool negative) {
+string to_extended_code(int val, bool negative, int body_size) {
     if (val == 0 && negative)
         return MINUS_ZERO_DOESNT_EXIST;
 
-    string s = to_reverse_code(val, negative);
+    string s = to_reverse_code(val, negative, body_size);
     if (val >= 0)
         return s;
 
@@ -58,13 +63,14 @@ string to_extended_code(int val, bool negative) {
     }
     return s;
 }
-string to_mod_extended_code(int val, bool negative) {
+string to_mod_extended_code(int val, bool negative, int body_size) {
     if (val == 0 && negative)
         return MINUS_ZERO_DOESNT_EXIST;
 
-    string s = to_extended_code(val, negative);
-    if (val >= 0) return '0' + s;
-    return '1' + s;
+    string s = to_extended_code(val, negative, body_size);
+    
+    if (val >= 0) return "00." + s.substr(2, s.size() - 1);
+    return "11." + s.substr(2, s.size() - 1);
 }
 
 int binary_to_int(string code) {
@@ -93,8 +99,8 @@ void make_same_size(string& a, string& b, int prefix_length) {
 string mod_ex_add(int ai, int bi) {
     //int sign = ((a[0] == '1' && b[0] != '1') || (a[0] != '1' && b[0] == '1')) ? -1 : 1;
     
-    string a = to_mod_extended_code(ai, ai < 0);
-    string b = to_mod_extended_code(bi, bi < 0);
+    string a = to_mod_extended_code(ai, ai < 0, 0);
+    string b = to_mod_extended_code(bi, bi < 0, 0);
 
     a = a.substr(0, 3) + '0' + a.substr(3, a.size() - 2);
     b = b.substr(0, 3) + '0' + b.substr(3, b.size() - 2);

@@ -42,7 +42,9 @@ char char_input(string message) {
             cin.ignore();
         }
     }
-    return ans;
+    cin.clear();
+    cin.ignore();
+    return toupper(ans);
 }
 void check(string code) {
     if (code == MINUS_ZERO_DOESNT_EXIST)
@@ -53,7 +55,7 @@ void check(string code) {
 int run() {
     int a, b, m, code_type, i_ans;
     char response;
-    string stra, strb, str_ans;
+    string stra, strb, str_ans, r2;
     bool f1, f2;
 p1:
     cout << "Введите два целых числа\n";
@@ -81,28 +83,45 @@ p4:
     }
 
 p5:
-    if (stra[0] == '-')
+    if (stra == "-0")
         stra = MINUS_ZERO_DOESNT_EXIST;
-    else stra = to_mod_extended_code(a, a < 0);
+    else stra = to_straight_code(a, a < 0, 0);
 
-    if (strb[0] == '-')
+    if (strb == "-0")
         strb = MINUS_ZERO_DOESNT_EXIST;
-    else strb = to_mod_extended_code(b, b < 0);
+    else strb = to_straight_code(-b, -b < 0, 0);
 
-    if (stra != MINUS_ZERO_DOESNT_EXIST && strb != MINUS_ZERO_DOESNT_EXIST)
-        make_same_size(stra, strb, 3);
+    int size = 0;
+    if (stra != MINUS_ZERO_DOESNT_EXIST && strb != MINUS_ZERO_DOESNT_EXIST) {
+        //make_same_size(stra, strb, 3);
+        size = max(stra.size(), strb.size());
+        stra = to_mod_extended_code(a, a < 0, size);
+        strb = to_mod_extended_code(-b, -b < 0, size);
+    }
+    
+    
     //str_ans = mod_ex_add(a, b);
     i_ans = a - b;//binary_to_int(str_ans);
+    r2 = to_straight_code(i_ans, i_ans < 0, 0);
+    string body = r2.substr(2, r2.size() - 1);
+    while (body.size() > 2 && body[0] == '0')
+        body.erase(0, 1);
+
+    if (r2[0] == '1')
+        r2 = '-' + body;
+    else r2 = body;
+
     cout << "\nA-B\n"
         << "A = " << stra << "\n"
         << "B = " << strb << "\n"
         << string(4 + strb.size(), '-') << "\n"
         << "результат:\n"
-        << "ПК = " << to_straight_code(i_ans, i_ans < 0) << "\n"
-        << "ОК = " << to_reverse_code(i_ans, i_ans < 0) << "\n"
-        << "ДК = " << to_extended_code(i_ans, i_ans < 0) << "\n"
-        << "МДК = " << to_mod_extended_code(i_ans, i_ans < 0) << "\n"
-        << "R(2) = " << to_straight_code(i_ans, i_ans < 0) << "\n" // **** what should be here?
+        
+        << "R(ОК) = " << to_reverse_code(i_ans, i_ans < 0, size) << "\n"
+        << "R(ПК) = " << to_straight_code(i_ans, i_ans < 0, size) << "\n"
+        //<< "R(ДК) = " << to_extended_code(i_ans, i_ans < 0) << "\n"
+        //<< "МДК = " << to_mod_extended_code(i_ans, i_ans < 0) << "\n"
+        << "R(2) = " << r2 << "\n"
         << "R(10) = " << i_ans << "\n";
 
 p6:
@@ -123,7 +142,9 @@ p6:
 p7:
     cout << "Ввести новое значение заданных чисел?\n";
     response = char_input("(Y - да / N - нет)\n");
-
+    string buf;
+    //getline(cin, buf);
+    //cin.clear();
     switch (response)
     {
     case 'Y':
