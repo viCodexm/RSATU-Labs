@@ -112,10 +112,10 @@ p5:
     else r2 = body;
 
     cout << "\nA-B\n"
-        << "A = " << stra << "\n"
-        << "B = " << strb << "\n"
-        << string(4 + strb.size(), '-') << "\n"
-        << "результат:\n"
+        << stra << "\n"
+        << strb << "\n"
+        << string(strb.size(), '-') << "\n"
+        <<  to_mod_extended_code(i_ans, i_ans < 0, size) << "\n"
         
         << "R(ОК) = " << to_reverse_code(i_ans, i_ans < 0, size) << "\n"
         << "R(ПК) = " << to_straight_code(i_ans, i_ans < 0, size) << "\n"
