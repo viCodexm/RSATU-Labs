@@ -10,8 +10,8 @@ public:
 	vector<string> rpn;
 
 	void run() {
-		cout << "Чтение из файла ouput.txt\n";
-		fstream file("output.txt", ios_base::in);
+		cout << "Чтение из файла ouput.o\n";
+		fstream file("output.o", ios_base::in);
 		if (!file.is_open())
 			{ cout << "Файл не открывается!\n"; return; }
 

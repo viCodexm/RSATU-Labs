@@ -15,8 +15,8 @@ public:
 	}
 
 	void run() {
-		cout << "Запись в файл ouput.txt\n";
-		fstream file("output.txt", ios_base::out);
+		cout << "Запись в файл ouput.o\n";
+		fstream file("output.o", ios_base::out);
 		if (!file.is_open())
 			{ cout << "Файл не открывается!\n"; return; }
 
