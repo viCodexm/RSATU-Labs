@@ -53,17 +53,19 @@ void check(string code) {
 }
 
 int run() {
+
+p1:
     int a, b, m, code_type, i_ans;
     char response;
-    string stra, strb, str_ans, r2;
+    string stra, strb, str_ans, R;
     bool f1, f2;
-p1:
+
     cout << "Введите два целых числа (A < B)\n";
     cout << "A = "; getline(cin, stra);
     cout << "B = "; getline(cin, strb);
     
 p2:
-    if (_stoi(stra, &a) != 0 || _stoi(strb, &b) != 0)  {
+    if (_stoi(stra, &a) != 0 || _stoi(strb, &b) != 0 || a >= b)  {
         cout << "\nОшибка ввода исходных чисел\n\n";
         goto p1;
     }
@@ -85,67 +87,84 @@ p4:
         goto p3;
     }
 
-p5:
-    if (stra == "-0")
-        stra = MINUS_ZERO_DOESNT_EXIST;
-    else stra = to_straight_code(a, a < 0, 0);
+p5: 
+    // CHECK THIS SHIT: 0/any, any/0, 0/0;
+    
+    
+    cout << "Деление с восстановлением остатка и сдвигом делителя\n";
+    bitset<16> bits_a(abs(a)); bitset<16> bits_b(abs(b));
+    stra = bits_a.to_string(); strb = bits_b.to_string();
+    int cut = min(stra.find_first_of('1'), strb.find_first_of('1'));
 
-    if (strb == "-0")
-        strb = MINUS_ZERO_DOESNT_EXIST;
-    else strb = to_straight_code(-b, -b < 0, 0);
+    stra = stra.substr(cut); strb = strb.substr(cut);
+    // SHOULD I MAKE OUTPUT LIKE THIS?
+    
+    string MDK_B = code_add_one(code_reverse(strb)); // REMEMBER IT DOESNT HAVE "11." or "00."
+    cout << "A = " << stra << "\n";
+    cout << "B = " << strb << "\n\n";
+    cout << setw(12) << "|B|" << setw(16) << "-|B|\n";
+    cout << "МПК   00."+strb << "    " << "11."+strb << "\n";
+    cout << "МОК   00."+strb << "    " << "11."+code_reverse(strb) << "\n";
+    cout << "МДК   00."+strb << "    " << "11." + MDK_B << "\n\n";
 
-    int size = 0;
-    if (stra != MINUS_ZERO_DOESNT_EXIST && strb != MINUS_ZERO_DOESNT_EXIST) {
-        //make_same_size(stra, strb, 3);
-        size = max(stra.size(), strb.size());
-        stra = to_mod_extended_code(a, a < 0, size);
-        strb = to_mod_extended_code(-b, -b < 0, size);
+    string up = "00."+stra, down = "11."+MDK_B, res;
+pOUT:
+    cout << up << "\n";
+    cout << down << "\n";
+    cout << string(stra.size() + 3, '-') << "\n";
+
+    res = code_plus_code(up, down);
+    cout << res << ((res[0] == '0') ? "   > 0" : "   < 0") << "\n";
+
+    // > 0
+    if (res[0] == '0') {
+        up = mdk_code_move_left(res);
+        cout << up << "   <---\n";
     }
-    
-    
-    //str_ans = mod_ex_add(a, b);
-    i_ans = a - b;//binary_to_int(str_ans);
-    r2 = to_straight_code(i_ans, i_ans < 0, 0);
-    string body = r2.substr(2, r2.size() - 1);
-    while (body.size() > 2 && body[0] == '0')
-        body.erase(0, 1);
-
-    if (r2[0] == '1')
-        r2 = '-' + body;
-    else r2 = body;
-
-    cout << "\nA-B\n"
-        << stra << "\n"
-        << strb << "\n"
-        << string(strb.size(), '-') << "\n"
-        <<  to_mod_extended_code(i_ans, i_ans < 0, size) << "\n"
-        
-        << "R(ОК) = " << to_reverse_code(i_ans, i_ans < 0, size) << "\n"
-        << "R(ПК) = " << to_straight_code(i_ans, i_ans < 0, size) << "\n"
-        //<< "R(ДК) = " << to_extended_code(i_ans, i_ans < 0) << "\n"
-        //<< "МДК = " << to_mod_extended_code(i_ans, i_ans < 0) << "\n"
-        << "R(2) = " << r2 << "\n"
-        << "R(10) = " << i_ans << "\n";
+    // < 0
+    else {
+        cout << up << "   Во\n";
+        up = mdk_code_move_left(up);
+        cout << up << "   <---\n";
+    }
+    R += (res[0] == '0') ? '1' : '0';
+    cout << "R = " << R[0] << '.' << R.substr(1) << "\n";
+    if (R.size() == up.size() - 1) // is that so?
+        goto p7;
 
 p6:
-    cout << "Изменить номер выполняемой операции?\n";
+    cout << "Продолжить деление?\n";
     response = char_input("(Y - да / N - нет)\n");
 
     switch (response)
     {
     case 'Y':
-        goto p3;
+        goto pOUT; // 
     case 'N':
-        goto p7;
+        goto p7; // CAREFUL
     default:
-        cout << "Ошибка запросов на повоторный ввод номера операции\n";
+        cout << "Ошибка ввода запроса на продолжение деления\n";
         goto p6;
     }
 
 p7:
-    cout << "Ввести новое значение заданных чисел?\n";
+    cout << "zR = zA (+) zB = " << ((a*b < 0) ? "-1" : "1") << " => R " << ((a*b < 0) ? "< 0" : "> 0") << "\n"; // is that so?
+    while (R.size() > 1 && R[R.size() - 1] == '0')
+        R.pop_back();
+    cout << "R(2) = " << ((a*b < 0) ? "-" : "+") << R[0] << '.' << R.substr(1) << "\n"; // is that so?
+    
+    cout << "R(10) = ";
+    double _res = 0;
+    for (int i = 0; i < R.size(); ++i) {
+        if (R[i] == '1')
+            _res += (1 / pow(2, i));
+    }
+    cout << (double)_res << "\n";
+
+p8:
+    cout << "Изменить значения исходных чисел?\n";
     response = char_input("(Y - да / N - нет)\n");
-    string buf;
+    //string buf;
     //getline(cin, buf);
     //cin.clear();
     switch (response)
@@ -155,8 +174,8 @@ p7:
     case 'N':
         break;
     default:
-        cout << "Ошибка запросов на ввод новых заданных чисел\n";
-        goto p7;
+        cout << "Ошибка ввода запроса на изменение исходных чисел\n";
+        goto p8;
     }
     return 0;
 }
