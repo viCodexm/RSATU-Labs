@@ -64,7 +64,7 @@ p1:
     cout << "B = "; getline(cin, strb);
     
 p2:
-    if (_stoi(stra, &a) != 0 || _stoi(strb, &b) != 0 || a >= b)  {
+    if (_stoi(stra, &a) != 0 || _stoi(strb, &b) != 0 || abs(a) >= abs(b))  {
         cout << "\nОшибка ввода исходных чисел\n\n";
         goto p1;
     }
@@ -147,10 +147,16 @@ p6:
     }
 
 p7:
-    cout << "zR = zA (+) zB = " << ((a*b < 0) ? "-1" : "1") << " => R " << ((a*b < 0) ? "< 0" : "> 0") << "\n"; // is that so?
+    cout << "zR = zA (+) zB = "
+    << ((a < 0) ? "1" : "0")
+    << " (+) "
+    << ((b < 0) ? "1" : "0")
+    << " = "
+    << ((a*b < 0) ? "1" : "0")
+    << " => R " << ((a*b < 0) ? "< 0" : "> 0") << "\n"; // is that so?
     while (R.size() > 1 && R[R.size() - 1] == '0')
         R.pop_back();
-    cout << "R(2) = " << ((a*b < 0) ? "-" : "+") << R[0] << '.' << R.substr(1) << "\n"; // is that so?
+    cout << "R(2) = " << ((a*b < 0) ? "-" : "") << R[0] << '.' << R.substr(1) << "\n"; // is that so?
     
     cout << "R(10) = ";
     double _res = 0;
