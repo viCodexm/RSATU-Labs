@@ -8,43 +8,30 @@ using namespace std;
 int main() {
     
     string file_name = "input.txt";
-    cout << "������ ��� �����? (y - �� / n - ���) (�� ��������� input.txt)\n";
+    cout << "Ввести имя файла? (y - да / n - нет) (по умолчанию input.txt)\n";
     char response; cin >> response;
 
     if (tolower(response) == 'y')
         cin >> file_name;
 
-    People guys(file_name);
+    People guys("input.txt");
     
-    cout << "-----���������� �����:-----\n";
+    cout << "-----содержимое файла:-----\n";
     for (int i = 0; i < guys.size(); ++i)
         cout << guys.get_fio(i) << "\n";
 
     response = (char)NULL;
     while (response != 'n') {
-        cout << "�������� ������ ��� �������� ��������? (y - �������� ������ / e - �������� / n - ��������� ������ ���������)\n";
+        cout << "добавить или изменить информацию о человеке? (y - добавить нового / e - изменить / n - завершить работу программы)\n";
         cin >> response;
         if (tolower(response) == 'y') {
             guys.add_via_console();
         }
         else if (tolower(response) == 'e') {
-            cout << "������� ����� ����������� �������� (0-����������):\n";
+            cout << "введите номер изменяемого человка (0-индексация):\n";
             int num; cin >> num;
             guys.change(num);
         }
     }
-    
-    
-    ofstream ff(file_name);
-    if (!ff.is_open()) {
-        cout << "FILE NOT OPEN!\n";
-        return -1;
-    }
-    for (int i = 0; i < guys.people.size(); ++i) {
-        string fio = guys.get_fio(i);
-        ff << fio << "\n";
-    }
-
-    ff.close();
     return 0;
 }

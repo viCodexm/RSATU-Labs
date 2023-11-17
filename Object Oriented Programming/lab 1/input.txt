@@ -4,3 +4,5 @@ E f g
 V g d
 SKVORTSOV dmitry vitalievich
 SASH aa aaa
+HELLO , world!
+DEFAULT but not
