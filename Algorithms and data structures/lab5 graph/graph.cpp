@@ -18,7 +18,7 @@ int main() {
 
     cout << "Введите n и k:\n";
     int n, k; cin >> n >> k;
-    cout << "Введите k пар from, to:\n";
+    cout << "Введите k пар:\n";
     unordered_map<int, edge> graph;
     for (int i = 0; i < k; ++i) {
         int from, to; cin >> from >> to;
@@ -30,6 +30,7 @@ int main() {
         graph[i];
 
     vector<int> ans;
+    queue<int> g;
     while (true) {
         vector<int> del;
         for (auto g : graph) {
@@ -48,10 +49,11 @@ int main() {
         }
 
         if (del.empty()) {
-            cout << "Вывод частичного графа:\n";
             break;
         }
     }
+    if (ans.size() < n)
+        cout << "Вывод частичного графа:\n"; 
     for (int& e : ans)
         cout << e << " ";
 

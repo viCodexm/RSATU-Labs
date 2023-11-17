@@ -57,6 +57,7 @@ p1:
     int a, b, m, code_type, i_ans;
     char response;
     string stra, strb, str_ans, R;
+    vector<string> output;
     bool f1, f2;
 
     cout << "Введите два целых числа (A < B)\n";
@@ -64,6 +65,10 @@ p1:
     cout << "B = "; getline(cin, strb);
     
 p2:
+    if (strb == "0" || strb == "-0") {
+        cout << "\nДеление на ноль!\n";
+        goto p1;
+    }
     if (_stoi(stra, &a) != 0 || _stoi(strb, &b) != 0 || abs(a) >= abs(b))  {
         cout << "\nОшибка ввода исходных чисел\n\n";
         goto p1;
@@ -108,26 +113,33 @@ p5:
 
     string up = "00."+stra, down = "11."+MDK_B, res;
 pOUT:
-    cout << up << "\n";
-    cout << down << "\n";
-    cout << string(stra.size() + 3, '-') << "\n";
+    if (output.empty())
+        output.push_back(up);
+    output.push_back(down);
+    output.push_back(string(stra.size() + 3, '-'));
+
 
     res = code_plus_code(up, down);
-    cout << res << ((res[0] == '0') ? "   > 0" : "   < 0") << "\n";
+    output.push_back((res + ((res[0] == '0') ? "   > 0" : "   < 0")));
+
+    cout << "\n";
+    for (string& s : output)
+        cout << s << "\n";
 
     // > 0
     if (res[0] == '0') {
         up = mdk_code_move_left(res);
-        cout << up << "   <---\n";
+        output.push_back((up + "   <---"));
     }
     // < 0
     else {
-        cout << up << "   Во\n";
+        output.push_back((up + "   Во"));
         up = mdk_code_move_left(up);
-        cout << up << "   <---\n";
+        output.push_back((up + "   <---"));        
     }
     R += (res[0] == '0') ? '1' : '0';
-    cout << "R = " << R[0] << '.' << R.substr(1) << "\n";
+    cout << "R = " << R[0] << ',' << R.substr(1) << "\n";
+    
     if (R.size() == up.size() - 1) // is that so?
         goto p7;
 
@@ -153,12 +165,16 @@ p7:
     << ((b < 0) ? "1" : "0")
     << " = "
     << ((a*b < 0) ? "1" : "0")
-    << " => R " << ((a*b < 0) ? "< 0" : "> 0") << "\n"; // is that so?
+    << " => R " << ((a*b < 0) ? "< 0" : "> 0") << "\n";
     while (R.size() > 1 && R[R.size() - 1] == '0')
         R.pop_back();
-    cout << "R(2) = " << ((a*b < 0) ? "-" : "") << R[0] << '.' << R.substr(1) << "\n"; // is that so?
     
-    cout << "R(10) = ";
+    cout << "R(2) = " << ((a*b < 0) ? "-" : "") << R[0];
+    if (!R.substr(1).empty())
+        cout << '.' << R.substr(1);
+    cout << "\n";
+
+    cout << "R(10) = " << ((a*b < 0) ? "-" : "");
     double _res = 0;
     for (int i = 0; i < R.size(); ++i) {
         if (R[i] == '1')
