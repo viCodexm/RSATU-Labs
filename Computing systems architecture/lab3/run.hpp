@@ -4,7 +4,6 @@
 
 using namespace std;
 
-#define A_minus_B   2
 #define MINUS_ZERO_DOESNT_EXIST "Значения '-0' в данном коде не существует"
 
 int _stoi(string str, int* p_value) {
@@ -82,7 +81,7 @@ p4:
         cout << "\nОшибка ввода номера способа деления\n\n";
         goto p3;
     }
-    if (m != A_minus_B) {
+    if (m != 1) {
         cout << "\nCпособ деления не реализован\n\n";
         goto p3;
     }
