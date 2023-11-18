@@ -30,19 +30,31 @@ int main() {
         graph[i];
 
     vector<int> ans;
-    queue<int> g;
+    vector<int> que;
+    for (auto g : graph) {
+        auto& [idx, links] = g;
+        
+        if (links.in_me.empty())
+            que.push_back(idx);
+    }
+
+
     while (true) {
-        vector<int> del;
-        for (auto g : graph) {
-            auto& [idx, links] = g;
+        vector<int> del, qnext;
+
+        for (int& idx : que) {
+            auto links = graph[idx];
             
             if (links.in_me.empty()) {
                 for (int to : links.to) {
                     graph[to].in_me.erase(idx);
+                    if (graph[to].in_me.empty())
+                        qnext.push_back(to);
                 }
                 del.push_back(idx);
             }
         }
+        que = qnext;
         for (int& idx : del) {
             ans.push_back(idx);
             graph.erase(idx);

@@ -66,7 +66,7 @@ p1:
     
 p2:
     if (strb == "0" || strb == "-0") {
-        cout << "\nДеление на ноль!\n";
+        cout << "\nДеление на ноль невозможно!\n";
         goto p1;
     }
     if (_stoi(stra, &a) != 0 || _stoi(strb, &b) != 0 || abs(a) >= abs(b))  {
@@ -95,7 +95,7 @@ p5:
     // CHECK THIS SHIT: 0/any, any/0, 0/0;
     
     
-    cout << "Деление с восстановлением остатка и сдвигом делителя\n";
+    cout << "1 C восстановлением и сдвигом остатка\n";
     bitset<16> bits_a(abs(a)); bitset<16> bits_b(abs(b));
     stra = bits_a.to_string(); strb = bits_b.to_string();
     int cut = min(stra.find_first_of('1'), strb.find_first_of('1'));
