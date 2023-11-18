@@ -8,19 +8,16 @@ struct People {
     string file_name;
     vector<Human> people;
 
-    /*People() {
+    People() {
         this->file_name = "input.txt";
-        fstream file(file_name);
-        while (!file.eof()) {
-            Human man(file);
-            if (!man.empty())
-                people.push_back(man);
-        }
-        file.close();
-    }*/
+        read_humans_from_file(this->file_name);
+    }
 
     People(string file_name) {
         this->file_name = file_name;
+        read_humans_from_file(this->file_name);
+    }
+    void read_humans_from_file(string file_name) {
         fstream file(file_name);
         while (!file.eof()) {
             Human man(file);
@@ -29,6 +26,7 @@ struct People {
         }
         file.close();
     }
+
     string get_fio(int i) {
         return people[i].get_fio();
     }
@@ -42,7 +40,7 @@ struct People {
         people.push_back(human);
     }
     Human read_human_via_console() {
-        cout << "������� ���:\n";
+        cout << "введите фио:\n";
         string first_name, middle_name, last_name;
         cin >> first_name >> middle_name >> last_name;
 
@@ -57,7 +55,7 @@ struct People {
         Human man = read_human_via_console();
         if (0 <= idx && idx < people.size())
             people[idx] = man;
-        else cout << "WRONG INDEX\n";
+        else cout << "Неправильный индекс!\n";
     }
     ~People() {
         ofstream ff(file_name);
