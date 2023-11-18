@@ -11,7 +11,7 @@ struct People {
     vector<shared_ptr<Human>> people;
 
     People() {
-        this->file_name = "input.txt";
+        this->file_name = "input.o";
         read_humans_from_file(this->file_name);
     }
 

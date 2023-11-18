@@ -24,6 +24,6 @@ public:
         tie(first_name, middle_name, last_name, group_name, group_number) = new_info;
     }
     string get_info() override {
-        return "Student: " + Human::get_info() + " Group: " + get_group() + "\n";
+        return "Student: " + Human::get_info() + " Group: " + get_group();
     }
 };

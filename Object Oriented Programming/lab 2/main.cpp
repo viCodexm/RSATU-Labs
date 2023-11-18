@@ -7,14 +7,14 @@ using namespace std;
 
 int main() {
     
-    string file_name = "input.txt";
-    cout << "Ввести имя файла? (y - да / n - нет) (по умолчанию input.txt)\n";
+    string file_name = "input.o";
+    cout << "Ввести имя файла? (y - да / n - нет) (по умолчанию input.o)\n";
     char response; cin >> response;
 
     if (tolower(response) == 'y')
         cin >> file_name;
 
-    People guys("input.txt");
+    People guys("input.o");
     
     cout << "-----содержимое файла:-----\n";
     for (int i = 0; i < guys.size(); ++i)
