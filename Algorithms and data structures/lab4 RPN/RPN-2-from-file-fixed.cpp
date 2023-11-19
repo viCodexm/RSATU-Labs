@@ -44,7 +44,7 @@ public:
 
 		for (string& s : rpn) {
 			if (s == "+" || s == "-" || s == "*" || s == "/") {
-				if (md.size() < 2) { error(); return; }
+				if (md.size() < 2) { error("Ошибка! Выполнение операции над одним операндом!"); return; }
 				float y = md.top(); md.pop();
 				float x = md.top(); md.pop();
 				
@@ -59,6 +59,8 @@ public:
 					md.push(x * y);
 					break;
 				case '/':
+					if (y == 0)
+						error("Ошибка! Деление на ноль!");
 					md.push(x / y);
 					break;
 				}
@@ -74,8 +76,8 @@ public:
 		md.pop();
 	}
 
-	void error() {
-		cout << "Ошибка! Неверный ввод!\n";
+	void error(string message) {
+		cout << message;
 		exit(0);
 	}
 	

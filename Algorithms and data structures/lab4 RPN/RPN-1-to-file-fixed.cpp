@@ -28,8 +28,8 @@ public:
 		file.close();
 	}
 
-	void error() {
-		cout << "Ошибка! Неверный ввод!\n";
+	void error(string message) {
+		cout << message;
 		exit(0);
 	}
 
@@ -42,16 +42,60 @@ public:
 		case '(': return -1;
 		case ')': return 2;
 		}
-		error();
+		error("Ошибка #1! Неверный ввод!");
         return 0;
 	}
 	// a >= b ? true : false
 	bool higher_precedence(char& a, char& b) {
 		return getPriority(a) >= getPriority(b);
 	}
+	bool findError(string str) {
+		str.erase(remove(str.begin(), str.end(), ' '), str.end());
+		const int size = str.size();
 
+		int open_brace = 0, operands = 0, operations = 0;
+
+		// операций внутри скобок на одну меньше чем операндов
+		for (int i = 0; i < size; ++i) {
+			if (open_brace < 0)
+				return true;
+			if (str[i] == '(') {
+				open_brace++;
+			}
+			else if (str[i] == ')') {
+				open_brace--;
+			}
+			else if (isoperat(str[i])) {
+				if (i - 1 >= 0 && (isoperat(str[i - 1]) || str[i - 1] == '('))
+					return true;
+				operations++;
+			}
+			else if (isalpha(str[i])) {
+				if (i - 1 >= 0 && (isalpha(str[i - 1]) || str[i - 1] == ')'))
+					return true;
+				operands++;
+			}
+			else return true;
+		}
+
+		if (!operations && !operands && !open_brace)
+			return false;
+		return operands - 1 != operations;
+
+		/*
+		Expect
+		1) ( a
+		2) a +
+		3) + b
+		4) b -
+		5) )- ( a
+
+		*/
+	}
 	bool read() {
 		string infix; getline(cin, infix);
+		if (findError(infix))
+			error("Ошибка #2! Неверный ввод!");
 		int n = infix.size();
 		// 'i' changes if we found an integer
 		for (int i = 0; i < n; ++i) {
@@ -63,17 +107,15 @@ public:
 			}
 			if (infix[i] == ')') {
 				bool found = false;
-				/*
-				if (!operatorStack.empty() && operatorStack.top() == '(') {
-					found = true;
-				}
-				else*/
+				
 				while (!operatorStack.empty() && !found) {
+					if (operatorStack.top() == '(')
+						error("Ошибка #3! Неверный ввод!");
 					rpn.push_back( operatorStack.top() );
 					operatorStack.pop();
 					if (operatorStack.top() == '(') found = true;
 				}
-				if (!found) error();
+				if (!found) error("Ошибка #4! Неверный ввод!");
 				else operatorStack.pop();
 				continue;
 			}
@@ -88,8 +130,6 @@ public:
 				operatorStack.push(infix[i]);
 				continue;
 			}
-
-			
 
 			// if it's char
 			rpn.push_back(infix[i]);
