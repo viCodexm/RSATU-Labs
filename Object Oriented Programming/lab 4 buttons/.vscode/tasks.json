@@ -13,7 +13,7 @@
                 "-lsfml-graphics",
                 "-lsfml-window",
                 "-lsfml-system",
-                "-lsfml-audio",
+                "-lsfml-audio"
             ],
             "options": {
                 "cwd": "${fileDirname}"
