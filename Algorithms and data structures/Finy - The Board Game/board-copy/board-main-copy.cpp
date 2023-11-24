@@ -274,74 +274,59 @@ void round(sf::RenderWindow& window) {
     }
 }
 
-bool dfs(bool me, int a, int b, int c, int d, int e, int f, vector<pair<char, int>> moves, map<tuple<int, int, int, int, int, int>, int>& dp) {
-    auto it = dp.find({a,b,c,d,e,f});
-    if (it != dp.end())
-        return it->second;
-
+bool dfs(bool me, int a, int b, int c, int d, int e, int f) {
     if ((a - b == 0) && (c - d == 0) && (e - f == 0)) {
-        cout << "\n" << (me ? "bot" : "player") << "\n";
-        for (pair<char, int> p : moves) {
-            cout << p.first << " " << p.second << "       ";
-        }
-        cout << "\n\n";
-        return dp[{a,b,c,d,e,f}] = me;
+        return me;
     }
-        
+    
     if (me) {
         bool ok = true;
-        for (int i = a; i < b; ++i) {
-            moves.push_back({'a', i - a});
-            ok = !dfs(!me, i,b,c,d,e,f, moves, dp);
-            moves.pop_back();
+        while (a < b) {
+            ok = !dfs(!me, a+1,b,c,d,e,f);
+            a++;
             if (!ok)
-                return dp[{a,b,c,d,e,f}] = !me;
+                return !me;
         }
-        for (int i = c; i < d; ++i) {
-            moves.push_back({'c', i - c});
-            ok = !dfs(!me, a,b,i,d,e,f, moves, dp);
-            moves.pop_back();
+        while (c < d) {
+            ok = !dfs(!me, a,b,c+1,d,e,f);
+            c++;
             if (!ok)
-                return dp[{a,b,c,d,e,f}] = !me;
+                return !me;
         }
-        for (int i = e; i < f; ++i) {
-            moves.push_back({'e', i - e});
-            ok = !dfs(!me, a,b,c,d,i,f, moves, dp);
-            moves.pop_back();
+        while (e < f) {
+            ok = !dfs(!me, a,b,c,d,e+1,f);
+            e++;
             if (!ok)
-                return dp[{a,b,c,d,e,f}] = !me;
+                return !me;
         }
         // то есть если после хода бота игрок ни одним способом не побеждает - это правильный ход
-        return dp[{a,b,c,d,e,f}] = me;
+        return me;
         //return !dfs(!me, a + 1,b,c,d,e,f) && !dfs(!me, a,b,c+1,d,e,f) && !dfs(!me, a,b,c,d,e+1,f);
     }
     else {
         bool ok = true;
-        for (int i = b; b > a; --i) {
-            moves.push_back({'b', i - b});
-            ok = !dfs(!me, a,i,c,d,e,f, moves, dp);
-            moves.pop_back();
+        while (a < b) {
+            ok = !dfs(!me, a,b-1,c,d,e,f);
+            b--;
             if (!ok)
-                return dp[{a,b,c,d,e,f}] = me;
+                return me;
         }
-        for (int i = d; d > c; --i) {
-            moves.push_back({'d', i - d});
-            ok = !dfs(!me, a,b,c,i,e,f, moves, dp);
-            moves.pop_back();
+        while (c < d) {
+            ok = !dfs(!me, a,b,c,d-1,e,f);
+            d--;
             if (!ok)
-                return dp[{a,b,c,d,e,f}] = me;
+                return me;
         }
-        for (int i = f; f > e; --i) {
-            moves.push_back({'f', i - f});
-            ok = !dfs(!me, a,b,c,d,e,i, moves, dp);
-            moves.pop_back();
+        while (e < f) {
+            ok = !dfs(!me, a,b,c,d,e,f-1);
+            f--;
             if (!ok)
-                return dp[{a,b,c,d,e,f}] = me;
+                return me;
         }
         // то есть если после хода бота игрок ни одним способом не побеждает - это правильный ход
-        return dp[{a,b,c,d,e,f}] = !me;
+        return !me;
     }
-
+    
 
     //else {
 
@@ -355,10 +340,13 @@ int main() {
     const bool bot = 1;
     const bool player = 0;
 
-    vector<pair<char, int>> moves;
-    map<tuple<int, int, int, int, int, int>, int> dp;
-    cout << dfs(bot, 2, 4, 6, 15, 19, 23, moves, dp) << endl;
-    cout << dfs(player, 2, 4, 6, 15, 19, 23, moves, dp) << endl;
+    
+    cout << dfs(bot, 2, 4, 6, 15, 19, 23) << endl;
+
+    cout << dfs(bot, 9,15,10,13,11,17) << endl;
+    
+    
+    cout << dfs(player, 2, 4, 6, 15, 19, 23) << endl;
     /*
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Finy - The Board Game", sf::Style::Titlebar | sf::Style::Close);
     while (window.isOpen()) {
