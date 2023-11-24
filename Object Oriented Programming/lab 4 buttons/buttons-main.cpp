@@ -17,6 +17,7 @@ struct ReactiveRectangle : sf::RectangleShape {
     bool pressed = false;
     float speed = 0.05;
     int offset = 0;
+    void (ReactiveRectangle::*logic)(sf::RenderWindow&);
     
     void standart_logic(sf::RenderWindow& window) {
         pressed = onTap(window);
@@ -69,14 +70,26 @@ struct Board {
                 cells.push_back(cell);
             }
         }
+        redistribute();
     }
-
+    void redistribute() {
+        int idx = 0, jumping_idx = rand() % cells.size();
+        for (ReactiveRectangle& cell : cells) {
+            if (idx == jumping_idx)
+                cell.logic = &ReactiveRectangle::jumping_logic;
+            else cell.logic = &ReactiveRectangle::standart_logic;
+            idx++;
+        }
+    }
     void logic(sf::RenderWindow& window) {
         int idx = 0;
         for (ReactiveRectangle& cell : cells) {
-            
-            if (idx == jumping_idx) {
-                cell.jumping_logic(window);
+            (cell.*cell.logic)(window);
+            /*if (idx == jumping_idx) {
+                
+                
+
+                //cell.jumping_logic(window);
                 if (cell.pressed && prev_pressed_idx == -1) {
                     animation = true;
                     animation_start.restart();
@@ -96,6 +109,7 @@ struct Board {
                     prev_pressed_idx = idx;
                 }
             }
+            */ 
 
             
             window.draw(cell);
