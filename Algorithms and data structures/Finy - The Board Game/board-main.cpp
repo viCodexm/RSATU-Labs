@@ -158,7 +158,8 @@ struct Board {
     }
     
     int check_win() {
-        for (int j = 0; j < 3; ++j) {
+        // LazyWin
+        /*for (int j = 0; j < 3; ++j) {
             int idx1 = 0, idx2 = 7;
             while (!cells[idx1][j].isGamePiecePlayer)
                 idx1++;
@@ -167,14 +168,14 @@ struct Board {
             if (idx2 - idx1 != 1)
                 return false;
         }
-        return player_move ? 1 : 2;
-        /*
+        return player_move ? 1 : 2;*/
+        
+        // NerdWin
         if (cells[6][0].isGamePiecePlayer && cells[6][1].isGamePiecePlayer && cells[6][2].isGamePiecePlayer)
             return 2;
         if (cells[1][0].isGamePieceEnemy && cells[1][1].isGamePieceEnemy && cells[1][2].isGamePieceEnemy)
             return 1;
         return 0;
-        */
     }
 
     void logic(sf::RenderWindow& window) {
@@ -352,18 +353,18 @@ bool dfs(bool me, int a, int b, int c, int d, int e, int f, vector<pair<char, in
 }
 
 int main() {
-    const bool bot = 1;
+    /*const bool bot = 1;
     const bool player = 0;
 
     vector<pair<char, int>> moves;
     map<tuple<int, int, int, int, int, int>, int> dp;
     cout << dfs(bot, 2, 4, 6, 15, 19, 23, moves, dp) << endl;
     cout << dfs(player, 2, 4, 6, 15, 19, 23, moves, dp) << endl;
-    /*
+    */
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Finy - The Board Game", sf::Style::Titlebar | sf::Style::Close);
     while (window.isOpen()) {
         round(window);
-    }*/
+    }
 
     return 0;
 }
