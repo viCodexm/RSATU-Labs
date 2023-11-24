@@ -25,7 +25,7 @@ int main() {
         graph[from].to.insert(to);
         graph[to].in_me.insert(from);
     }
-    // add edges that previously were not condisered
+    // add edges that previously were not considered
     for (int i = 1; i <= n; ++i) 
         graph[i];
 
