@@ -45,10 +45,11 @@ public:
 		error("Ошибка #1! Неверный ввод!");
         return 0;
 	}
-	// a >= b ? true : false
+	
 	bool higher_precedence(char& a, char& b) {
 		return getPriority(a) >= getPriority(b);
 	}
+
 	bool findError(string str) {
 		str.erase(remove(str.begin(), str.end(), ' '), str.end());
 		const int size = str.size();
@@ -81,16 +82,6 @@ public:
 		if (!operations && !operands && !open_brace)
 			return false;
 		return operands - 1 != operations;
-
-		/*
-		Expect
-		1) ( a
-		2) a +
-		3) + b
-		4) b -
-		5) )- ( a
-
-		*/
 	}
 	bool read() {
 		string infix; getline(cin, infix);
@@ -122,7 +113,7 @@ public:
 
 			// if it's operator
 			if (isoperat(infix[i])) {
-				if (!operatorStack.empty() && higher_precedence(operatorStack.top(), infix[i]))
+				while (!operatorStack.empty() && higher_precedence(operatorStack.top(), infix[i]))
 				{
 					rpn.push_back( operatorStack.top() );
 					operatorStack.pop();
