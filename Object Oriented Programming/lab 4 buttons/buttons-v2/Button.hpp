@@ -25,12 +25,8 @@ struct Button : sf::RectangleShape {
     }
     
     bool onTap(sf::RenderWindow& window) {
-        sf::Vector2i mousePos = sf::Mouse::getPosition(window);
-        sf::Vector2f rectPos = this->getPosition();
-        sf::Vector2f rectSize = this->getSize();
-        return (mousePos.x >= rectPos.x && mousePos.x <= rectPos.x + rectSize.x &&
-                mousePos.y >= rectPos.y && mousePos.y <= rectPos.y + rectSize.y &&
-                sf::Mouse::isButtonPressed(sf::Mouse::Left));
+        return this->getGlobalBounds().contains((sf::Vector2f)sf::Mouse::getPosition(window))
+            && sf::Mouse::isButtonPressed(sf::Mouse::Left);
     }
     void shake() {
         offset++;
