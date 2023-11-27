@@ -6,8 +6,8 @@ using namespace std;
 //#define DEBUG 0
 
 struct edge {
-    set<int> to;
-    set<int> in_me;
+    unordered_set<int> to;
+    unordered_set<int> in_me;
 };
 
 int main() {
