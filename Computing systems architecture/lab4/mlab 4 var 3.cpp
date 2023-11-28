@@ -42,6 +42,16 @@ string get_matisse(string binStr) {
         mantisse.pop_back();
     return mantisse;
 }
+string dec_to_bin(int decimal) {
+    bitset<32> bst(decimal);
+    string binStr = bst.to_string();
+    
+    int idx = 0;
+    while (idx < binStr.size() && binStr[idx] == '0')
+        idx++;
+    
+    return binStr.substr(idx, binStr.size() - idx);
+}
 
 bool int_input(string message, int& ans) {
     bool f = false;
@@ -147,77 +157,45 @@ pOPERATION:
     << binA[0] << " (+) " << binB[0]
     << " = " 
     << ((binA[0] - '0') + (binB[0] - '0') == 1)
-    << "\n";
+    << "\n\n";
     
-    cout << "     ипА(2)         ипB(2)\n";
-    cout << "ПК  ";
-    cout << "OК  ";
-    cout << "ДК  ";
-    cout << "МДК  ";
+
+    string ipA = dec_to_bin(bin_to_dec(binA.substr(1, 8)) - 127);
+    string ipB = dec_to_bin(bin_to_dec(binB.substr(1, 8)) - 127);
+    cout << "     ипА(2)         ипB(2)\n"; // check this
+    cout << "ПК   " << ipA << "    " << ipB << "\n"; // fix
+    cout << "OК   " << ipA << "    " << ipB << "\n"; // fix
+    cout << "ДК   " << ipA << "    " << ipB << "\n"; // fix
+    cout << "МДК  " << ipA << "    " << ipB << "\n"; // fix that
     cout << "\n";
-    // какое-то сложение порядков
+    // какое-то сложение порядков (что это ??)
     // ...
-    cout << "ипA(МДК) = ";
-    cout << "ипB(МДК) = ";
-    cout << "ипR(МДК) = ";
-    cout << "ипR(2) = "; // может быть и плюс и минус
-    cout << "ипR(10) = ";
+    string ipR = "something..."; // fix that
+    cout << "ипA(МДК) = " << ipA << "\n";
+    cout << "ипB(МДК) = " << ipB << "\n";
+    cout << "ипR(МДК) = " << ipR << "\n";
+    cout << "ипR(2) = " << ipR; // может быть и плюс и минус
+    cout << "ипR(10) = " << ipR; 
     
     
 pOUT:
     
-    // "mA  "
-    // "mB  "
-    // "------"
-    // "mR = "
-    // запросов на продолжения деления не будет
-p6:
-    cout << "Продолжить деление?\n"; 
-    response = char_input("(Y - да / N - нет)\n");
+    cout << "mA  " << "\n"
+         << "mB  " << "\n"
+         << "------\n"
 
-    switch (response)
-    {
-    case 'Y':
-        goto pOUT;
-    case 'N':
-        goto p7;
-    default:
-        cout << "Ошибка ввода запроса на продолжение деления\n";
-        goto p6;
-    }
+         << "mR = " << "\n";
+p6:
+    // умножение
 
 p7:
     // Если требуется нормализация, то выводим
-    cout << "mRн = "
-         << "ИПRн(10) = "
-         << "СПR(10) = "
-         << "СПR(2) = "
-         << "R(2) = "
-         << "R(16) = ";
-
-    
-    cout << "zR = zA (+) zB = "
-    << ((a < 0) ? "1" : "0")
-    << " (+) "
-    << ((b < 0) ? "1" : "0")
-    << " = "
-    << ((a*b < 0) ? "1" : "0")
-    << " => R " << ((a*b < 0) ? "< 0" : "> 0") << "\n";
-    while (R.size() > 1 && R[R.size() - 1] == '0')
-        R.pop_back();
-    
-    cout << "R(2) = " << ((a*b < 0) ? "-" : "") << R[0];
-    if (!R.substr(1).empty())
-        cout << '.' << R.substr(1);
-    cout << "\n";
-
-    cout << "R(10) = " << ((a*b < 0) ? "-" : "");
-    double _res = 0;
-    for (int i = 0; i < R.size(); ++i) {
-        if (R[i] == '1')
-            _res += (1 / pow(2, i));
-    }
-    cout << (double)_res << "\n";
+    cout << "mRн = " << "\n"
+         << "ИПRн(10) = " << "\n"
+         << "СПR(10) = " << "\n"
+         << "СПR(2) = " << "\n"
+         << "R(2) = " << "\n"
+         << "R(16) = " << "\n";
 
 p8:
     cout << "Изменить значения исходных чисел?\n";
