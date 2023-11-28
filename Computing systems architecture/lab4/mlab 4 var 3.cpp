@@ -27,6 +27,18 @@ string hex_to_bin(string hexStr) {
 
     return binStr;
 }
+string bin_to_hex(string binStr) {
+    map<string, char> binMap = {
+        {"0000", '0'}, {"0001", '1'}, {"0010", '2'}, {"0011", '3'},
+        {"0100", '4'}, {"0101", '5'}, {"0110", '6'}, {"0111", '7'},
+        {"1000", '8'}, {"1001", '9'}, {"1010", 'A'}, {"1011", 'B'},
+        {"1100", 'C'}, {"1101", 'D'}, {"1110", 'E'}, {"1111", 'F'}
+    };
+    string hexStr = "";
+    for (int i = 0; i < binStr.size() - 3; i += 4)
+        hexStr += binMap[binStr.substr(i, 4)];
+    return hexStr;
+}
 int bin_to_dec(string binStr) {
     int decimal = 0;
     const int size = binStr.size();
@@ -93,7 +105,6 @@ p1:
     int a, b, m, code_type, i_ans;
     char response;
     string hexA, hexB, str_ans, R;
-    vector<string> output;
     bool f1, f2;
 
     cout << "Введите два вещественных шестнадцатеричных числа:\n";
@@ -112,22 +123,25 @@ p2:
 
 pUnpacking:
     string binA = hex_to_bin(hexA), binB = hex_to_bin(hexB);
-    
+    int ipA10 = bin_to_dec(binA.substr(1, 8)) - 127;
+    int ipB10 = bin_to_dec(binB.substr(1, 8)) - 127;
+    string mA = get_matisse(binA);
+    string mB = get_matisse(binB);
     // внимательно смотреть лишние нули
     cout << "\n"
-         << "A(2) = " << binA << "\n"
+         << "A(2) = " << space_wrapper(binA) << "\n"
          << "zA = " << binA[0] << "\n"
-         << "спА(2) = " << binA.substr(1, 8) << "\n"
+         << "спА(2) = " << space_wrapper(binA.substr(1, 8)) << "\n"
          << "спА(10) = " << bin_to_dec(binA.substr(1, 8)) << "\n"
-         << "ипА(10) = " << bin_to_dec(binA.substr(1, 8)) - 127 << "\n"
-         << "mA = " << get_matisse(binA) << "\n"
+         << "ипА(10) = " << ipA10 << "\n"
+         << "mA = " << mA << "\n"
          << "\n"
-         << "B(2) = " << binB << "\n"
+         << "B(2) = " << space_wrapper(binB) << "\n"
          << "zB = " << binB[0] << "\n"
-         << "спB(2) = " << binB.substr(1, 8) << "\n"
+         << "спB(2) = " << space_wrapper(binB.substr(1, 8)) << "\n"
          << "спB(10) = " << bin_to_dec(binB.substr(1, 8)) << "\n"
-         << "ипB(10) = " << bin_to_dec(binB.substr(1, 8)) - 127 << "\n"
-         << "mB = " << get_matisse(binB) << "\n"
+         << "ипB(10) = " << ipB10 << "\n"
+         << "mB = " << mB << "\n"
          << "\n";
 
 p4:
@@ -148,54 +162,85 @@ p5:
     }
 
 pOPERATION:
-    // "да да да, это не шутки" - (c) Сидоров
-    // "а кто такая Соня Маремеладова? Сонечка, то? - прАстИтуткА" - (c) Сидоров
-    // ""
 
     cout << "\n3 A*B\n";
+    char zR = ((binA[0] - '0') + (binB[0] - '0') == 1) ? '1' : '0';
     cout << "zR = zA (+) zB = "
     << binA[0] << " (+) " << binB[0]
     << " = " 
-    << ((binA[0] - '0') + (binB[0] - '0') == 1)
+    << zR
     << "\n\n";
     
 
     string ipA = dec_to_bin(bin_to_dec(binA.substr(1, 8)) - 127);
     string ipB = dec_to_bin(bin_to_dec(binB.substr(1, 8)) - 127);
-    cout << "     ипА(2)         ипB(2)\n"; // check this
-    cout << "ПК   " << ipA << "    " << ipB << "\n"; // fix
-    cout << "OК   " << ipA << "    " << ipB << "\n"; // fix
-    cout << "ДК   " << ipA << "    " << ipB << "\n"; // fix
-    cout << "МДК  " << ipA << "    " << ipB << "\n"; // fix that
+    make_same_size_leading_zero(ipA, ipB);
+    int force_size = ipA.size();
+    
+    const int sw = 12;
+    cout << "       ипА(2)              ипB(2)\n";
+    cout << "ПК" << setw(sw) << to_straight_code(ipA10, ipA10 < 0, force_size)
+     << setw(sw) << "    " << to_straight_code(ipB10, ipB10 < 0, force_size) << "\n";
+    
+    cout << "OК" << setw(sw) << to_reverse_code(ipA10, ipA10 < 0, force_size)
+    << setw(sw) << "    " << to_reverse_code(ipB10, ipB10 < 0, force_size) << "\n";
+    
+    cout << "ДК" << setw(sw) << to_extended_code(ipA10, ipA10 < 0, force_size)
+    << setw(sw) << "    " << to_extended_code(ipB10, ipB10 < 0, force_size) << "\n";
+
+    string ipA_mdk = to_mod_extended_code(ipA10, ipA10 < 0, force_size);
+    string ipB_mdk = to_mod_extended_code(ipB10, ipB10 < 0, force_size);
+
+    cout << "МДК" << setw(sw-1) << ipA_mdk << setw(sw-1) << "    " << ipB_mdk << "\n";
     cout << "\n";
-    // какое-то сложение порядков (что это ??)
-    // ...
-    string ipR = "something..."; // fix that
-    cout << "ипA(МДК) = " << ipA << "\n";
-    cout << "ипB(МДК) = " << ipB << "\n";
-    cout << "ипR(МДК) = " << ipR << "\n";
-    cout << "ипR(2) = " << ipR; // может быть и плюс и минус
-    cout << "ипR(10) = " << ipR; 
+
+    // сложение порядков
+    string ipR_mdk = code_plus_code(ipA_mdk, ipB_mdk);
+    int ipR10 = ipA10 + ipB10;
+    cout << "ипA(МДК) = " << ipA_mdk << "\n";
+    cout << "ипB(МДК) = " << ipB_mdk << "\n";
+    cout << "ипR(МДК) = " << ipR_mdk << "\n";
+    cout << "ипR(2) = " << ((ipR10 < 0) ? "-" : "") << to_straight_code(ipR10, ipR10 < 0, 0).substr(2) << "\n"; // может быть и плюс и минус
+    cout << "ипR(10) = " << ipR10 << "\n\n"; 
     
     
 pOUT:
-    
-    cout << "mA  " << "\n"
-         << "mB  " << "\n"
-         << "------\n"
-
-         << "mR = " << "\n";
-p6:
     // умножение
-
+    const int ms = mA.size();//max(mA.size(), mB.size());
+    cout << "mA" << setw(2 * ms - 4) << mA << "\n"
+         << "mB" << setw(2 * ms - 4) << mB << "\n"
+         << string(2 * ms - 2, '-') << "\n";
+    
+    mA = mA.substr(2);
+    mB = mB.substr(2);
+    string output = "";
+    for (int i = mB.size() - 1; i >= 0; --i) {
+        if (mB[i] == '1') {
+            cout << setw(ms + i) << mA << "\n";
+            string buf = mA + string(mB.size() - i - 1, '0');
+            make_same_size_leading_zero(output, buf);
+            output = code_plus_code(output, buf);
+        }
+        else cout << setw(ms + i) << string(mA.size(), '0') << "\n";
+    }
+    cout << string(2 * ms - 1, '-') << "\n";
+    cout << "  " << output << "\n\n";
+    int leading_zeros = 0;
+    while (leading_zeros < output.size() && output[leading_zeros] == '0')
+        leading_zeros++;
+    cout << "mR = " << "0," + output.substr(leading_zeros) << "\n";
+p6:
+    
+    string R2 = zR +/*спR +*/ output.substr(leading_zeros);
 p7:
     // Если требуется нормализация, то выводим
+    cout << "\n";
     cout << "mRн = " << "\n"
-         << "ИПRн(10) = " << "\n"
-         << "СПR(10) = " << "\n"
-         << "СПR(2) = " << "\n"
+         << "ипRн(10) = " << "\n"
+         << "спR(10) = " << "\n"
+         << "спR(2) = " << "\n"
          << "R(2) = " << "\n"
-         << "R(16) = " << "\n";
+         << "R(16) = " << bin_to_hex(R2) << "\n";
 
 p8:
     cout << "Изменить значения исходных чисел?\n";
