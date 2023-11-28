@@ -66,7 +66,7 @@ struct BouncingImage : public Image {
         for (auto& image : images) {
             if (this != image.get() && this->getGlobalBounds().intersects(image->getGlobalBounds())) {
                 direction = -direction;
-                position += direction + direction + direction;
+                position += direction + direction + direction + direction;
                 collisionSound.play();
                 break;
             }
