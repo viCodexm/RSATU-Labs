@@ -58,14 +58,15 @@ string mdk_code_move_left(string code) {
     return code.substr(1);
 }
 
-// без ведущих '0.' / '1.' / '00.' / '11.'
-void make_same_size_leading_zero(string& a, string& b) {
-    const int maxsize = 1 + max(a.size(), b.size()); // добавляем ведущий ноль
-    const int diff1 = maxsize - a.size();
-    const int diff2 = maxsize - b.size();
-    a = string(diff1, '0') + a;
-    b = string(diff2, '0') + b;
+void make_same_size(string& a, string& b, int prefix_length) {
+    int asize = a.size(), bsize = b.size();
+    const int diff = abs(asize - bsize);
+    if (asize < bsize)
+        a = a.substr(0, prefix_length) + string(diff, '0') + a.substr(prefix_length, asize);
+    else if (asize > bsize)
+        b = b.substr(0, prefix_length) + string(diff, '0') + b.substr(prefix_length, bsize);
 }
+
 
 
 // код из второй лабы
@@ -166,3 +167,60 @@ string space_wrapper(string output) {
     }
     return str;
 }
+
+bool isHex(string str) {
+    if (str.size() != 8)
+        return false;
+    for (char& c : str)
+        if (not(('A' <= c && c <= 'Z') || isdigit(c)))
+            return true;
+    return true;
+}
+string hex_to_bin(string hexStr) {
+    map<char, string> hexMap = {
+        {'0', "0000"}, {'1', "0001"}, {'2', "0010"}, {'3', "0011"},
+        {'4', "0100"}, {'5', "0101"}, {'6', "0110"}, {'7', "0111"},
+        {'8', "1000"}, {'9', "1001"}, {'A', "1010"}, {'B', "1011"},
+        {'C', "1100"}, {'D', "1101"}, {'E', "1110"}, {'F', "1111"}
+    };
+
+    string binStr = "";
+    for (char c : hexStr)
+        binStr += hexMap[c];
+
+    return binStr;
+}
+string bin_to_hex(string binStr) {
+    map<string, char> binMap = {
+        {"0000", '0'}, {"0001", '1'}, {"0010", '2'}, {"0011", '3'},
+        {"0100", '4'}, {"0101", '5'}, {"0110", '6'}, {"0111", '7'},
+        {"1000", '8'}, {"1001", '9'}, {"1010", 'A'}, {"1011", 'B'},
+        {"1100", 'C'}, {"1101", 'D'}, {"1110", 'E'}, {"1111", 'F'}
+    };
+    string hexStr = "";
+    for (int i = 0; i < binStr.size() - 3; i += 4)
+        hexStr += binMap[binStr.substr(i, 4)];
+    return hexStr;
+}
+int bin_to_dec(string binStr) {
+    int decimal = 0;
+    const int size = binStr.size();
+    for (int i = 0; i < size; ++i) {
+        if (binStr[i] == '1')
+            decimal += pow(2, size - i - 1);
+    }
+    return decimal;
+}
+
+string get_matisse(string binStr) {
+    string mantisse = "0," + binStr.substr(9, 32);
+    while (!mantisse.empty() && mantisse[mantisse.size() - 1] == '0')
+        mantisse.pop_back();
+    return mantisse;
+}
+string without_leading_zeroes(string str) {
+    int leading_zeros = 0;
+    while (leading_zeros < str.size() && str[leading_zeros] == '0')
+        leading_zeros++;
+    return str.substr(leading_zeros);
+} 

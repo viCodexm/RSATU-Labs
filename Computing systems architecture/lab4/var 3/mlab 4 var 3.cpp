@@ -5,66 +5,6 @@ using namespace std;
 
 #define MINUS_ZERO_DOESNT_EXIST "Значения '-0' в данном коде не существует"
 
-bool isHex(string str) {
-    if (str.size() != 8)
-        return false;
-    for (char& c : str)
-        if (not(('A' <= c && c <= 'Z') || isdigit(c)))
-            return true;
-    return true;
-}
-string hex_to_bin(string hexStr) {
-    map<char, string> hexMap = {
-        {'0', "0000"}, {'1', "0001"}, {'2', "0010"}, {'3', "0011"},
-        {'4', "0100"}, {'5', "0101"}, {'6', "0110"}, {'7', "0111"},
-        {'8', "1000"}, {'9', "1001"}, {'A', "1010"}, {'B', "1011"},
-        {'C', "1100"}, {'D', "1101"}, {'E', "1110"}, {'F', "1111"}
-    };
-
-    string binStr = "";
-    for (char c : hexStr)
-        binStr += hexMap[c];
-
-    return binStr;
-}
-string bin_to_hex(string binStr) {
-    map<string, char> binMap = {
-        {"0000", '0'}, {"0001", '1'}, {"0010", '2'}, {"0011", '3'},
-        {"0100", '4'}, {"0101", '5'}, {"0110", '6'}, {"0111", '7'},
-        {"1000", '8'}, {"1001", '9'}, {"1010", 'A'}, {"1011", 'B'},
-        {"1100", 'C'}, {"1101", 'D'}, {"1110", 'E'}, {"1111", 'F'}
-    };
-    string hexStr = "";
-    for (int i = 0; i < binStr.size() - 3; i += 4)
-        hexStr += binMap[binStr.substr(i, 4)];
-    return hexStr;
-}
-int bin_to_dec(string binStr) {
-    int decimal = 0;
-    const int size = binStr.size();
-    for (int i = 0; i < size; ++i) {
-        if (binStr[i] == '1')
-            decimal += pow(2, size - i - 1);
-    }
-    return decimal;
-}
-string get_matisse(string binStr) {
-    string mantisse = "0," + binStr.substr(9, 32);
-    while (!mantisse.empty() && mantisse[mantisse.size() - 1] == '0')
-        mantisse.pop_back();
-    return mantisse;
-}
-string dec_to_bin(int decimal) {
-    bitset<32> bst(decimal);
-    string binStr = bst.to_string();
-    
-    int idx = 0;
-    while (idx < binStr.size() && binStr[idx] == '0')
-        idx++;
-    
-    return binStr.substr(idx, binStr.size() - idx);
-}
-
 bool int_input(string message, int& ans) {
     bool f = false;
     cout << message;
@@ -92,11 +32,6 @@ char char_input(string message) {
     cin.clear();
     cin.ignore();
     return toupper(ans);
-}
-void check(string code) {
-    if (code == MINUS_ZERO_DOESNT_EXIST)
-        cout << code << "\n";
-    else cout << "C = " << code << "\n";
 }
 
 int main() {
@@ -172,82 +107,109 @@ pOPERATION:
     << "\n\n";
     
 
-    string ipA = dec_to_bin(bin_to_dec(binA.substr(1, 8)) - 127);
-    string ipB = dec_to_bin(bin_to_dec(binB.substr(1, 8)) - 127);
-    make_same_size_leading_zero(ipA, ipB);
-    int force_size = ipA.size();
+    string ipA = to_straight_code(ipA10, ipA10 < 0, false);
+    string ipB = to_straight_code(ipB10, ipB10 < 0, false);
+    make_same_size(ipA, ipB, 2);
+    //int force_size = ipA.size();
     
     const int sw = 12;
     cout << "       ипА(2)              ипB(2)\n";
-    cout << "ПК" << setw(sw) << to_straight_code(ipA10, ipA10 < 0, force_size)
-     << setw(sw) << "    " << to_straight_code(ipB10, ipB10 < 0, force_size) << "\n";
+    cout << "ПК" << setw(sw) << ipA
+     << setw(sw) << "    " << ipB << "\n";
     
-    cout << "OК" << setw(sw) << to_reverse_code(ipA10, ipA10 < 0, force_size)
-    << setw(sw) << "    " << to_reverse_code(ipB10, ipB10 < 0, force_size) << "\n";
+    string revA = to_reverse_code(ipA10, ipA10 < 0, false), revB = to_reverse_code(ipB10, ipB10 < 0, false);
+    make_same_size(revA, revB, 2);
+    cout << "OК" << setw(sw) << revA << setw(sw) << "    " << revB << "\n";
     
-    cout << "ДК" << setw(sw) << to_extended_code(ipA10, ipA10 < 0, force_size)
-    << setw(sw) << "    " << to_extended_code(ipB10, ipB10 < 0, force_size) << "\n";
+    string extA = to_extended_code(ipA10, ipA10 < 0, false), extB = to_extended_code(ipB10, ipB10 < 0, false);
+    make_same_size(extA, extB, 2);
+    cout << "ДК" << setw(sw) << extA
+    << setw(sw) << "    " << extB << "\n";
 
-    string ipA_mdk = to_mod_extended_code(ipA10, ipA10 < 0, force_size);
-    string ipB_mdk = to_mod_extended_code(ipB10, ipB10 < 0, force_size);
+    string ipA_mdk = to_mod_extended_code(ipA10, ipA10 < 0, false);
+    string ipB_mdk = to_mod_extended_code(ipB10, ipB10 < 0, false);
+    make_same_size(ipA_mdk, ipB_mdk, 3);
 
     cout << "МДК" << setw(sw-1) << ipA_mdk << setw(sw-1) << "    " << ipB_mdk << "\n";
     cout << "\n";
 
     // сложение порядков
-    string ipR_mdk = code_plus_code(ipA_mdk, ipB_mdk);
+    string ipR_mdk = without_leading_zeroes(code_plus_code("0" + ipA_mdk, "0"+ipB_mdk));
     int ipR10 = ipA10 + ipB10;
     cout << "ипA(МДК) = " << ipA_mdk << "\n";
     cout << "ипB(МДК) = " << ipB_mdk << "\n";
     cout << "ипR(МДК) = " << ipR_mdk << "\n";
-    cout << "ипR(2) = " << ((ipR10 < 0) ? "-" : "") << to_straight_code(ipR10, ipR10 < 0, 0).substr(2) << "\n"; // может быть и плюс и минус
+    string ipR2 = to_straight_code(ipR10, ipR10 < 0, 0).substr(2);
+    ipR2 = without_leading_zeroes(ipR2);
+    cout << "ипR(2) = " << ((ipR10 < 0) ? "-" : "") << (ipR2.empty() ? "0" : ipR2) << "\n"; // может быть и плюс и минус
     cout << "ипR(10) = " << ipR10 << "\n\n"; 
     
     
 pOUT:
     // умножение
-    const int ms = mA.size();//max(mA.size(), mB.size());
-    cout << "mA" << setw(2 * ms - 4) << mA << "\n"
-         << "mB" << setw(2 * ms - 4) << mB << "\n"
-         << string(2 * ms - 2, '-') << "\n";
+    const int ms = max(mA.size(), mB.size()) + mB.size();
+    int size_diff = abs((int)mA.size() - (int)mB.size());
+    // выравнивание
+    if (mA.size() > mB.size()) {
+        cout << "mA" << setw(ms + size_diff) << mA << "\n"
+             << "mB" << setw(ms) << mB << "\n"
+             << string(ms + 2 + size_diff, '-') << "\n";
+    }
+    else {
+        int x = 1;
+        cout << "mA" << setw(ms) << mA << "\n"
+             << "mB" << setw(ms + size_diff) << mB << "\n"
+             << string(ms + 2 + size_diff, '-') << "\n";
+    }
+    
     
     mA = mA.substr(2);
     mB = mB.substr(2);
     string output = "";
+    int offset = 0;
     for (int i = mB.size() - 1; i >= 0; --i) {
         if (mB[i] == '1') {
-            cout << setw(ms + i) << mA << "\n";
-            string buf = mA + string(mB.size() - i - 1, '0');
-            make_same_size_leading_zero(output, buf);
+            cout << setw(ms + 2 + size_diff - offset) << mA << "\n";
+            string buf = '0' + mA + string(mB.size() - i - 1, '0');
+            make_same_size(output, buf, 0);
             output = code_plus_code(output, buf);
         }
-        else cout << setw(ms + i) << string(mA.size(), '0') << "\n";
+        offset++;
     }
-    cout << string(2 * ms - 1, '-') << "\n";
-    cout << "  " << output << "\n\n";
+    cout << string(ms + 2 + size_diff, '-') << "\n";
+    cout << setw(ms + 2 + size_diff) << output << "\n\n";
+    
+    cout << "mR = " << "0," + output << "\n";
+    
+p7:
+    // Если требуется нормализация, то выводим
+    bool need_normalization = output[0] == '0';
     int leading_zeros = 0;
     while (leading_zeros < output.size() && output[leading_zeros] == '0')
         leading_zeros++;
-    cout << "mR = " << "0," + output.substr(leading_zeros) << "\n";
-p6:
-    
-    string R2 = zR +/*спR +*/ output.substr(leading_zeros);
-p7:
-    // Если требуется нормализация, то выводим
+
     cout << "\n";
-    cout << "mRн = " << "\n"
-         << "ипRн(10) = " << "\n"
-         << "спR(10) = " << "\n"
-         << "спR(2) = " << "\n"
-         << "R(2) = " << "\n"
-         << "R(16) = " << bin_to_hex(R2) << "\n";
+    if (need_normalization) // не учитывается сдвиг в другую сторону (нет примеров)
+        cout << "mRн = " << "0," + output.substr(leading_zeros) << "\n"
+            << "ипRн(10) = " << ipR10 + leading_zeros << "\n";
+
+    int spR10 = ipR10 + 127 - leading_zeros; // leading_zeros - normalisation
+    bitset<8> bst_spr(spR10);
+    string spR2 = bst_spr.to_string();
+    string R2 = zR + spR2 + output.substr(leading_zeros);
+    int diff = 32 - R2.size();
+    if (diff > 0)
+        R2 += string(diff, '0');
+    string R16 = bin_to_hex(R2);
+
+    cout << "спR(10) = " << spR10 << "\n"
+         << "спR(2) = " << spR2 << "\n"
+         << "R(2) = " << space_wrapper(R2) << "\n"
+         << "R(16) = " << space_wrapper(R16) << "\n";
 
 p8:
     cout << "Изменить значения исходных чисел?\n";
     response = char_input("(Y - да / N - нет)\n");
-    //string buf;
-    //getline(cin, buf);
-    //cin.clear();
     switch (response)
     {
     case 'Y':
