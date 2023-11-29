@@ -147,7 +147,7 @@ pOPERATION:
     
 pOUT:
     // умножение
-    const int ms = max(mA.size(), mB.size()) + mB.size();
+    const int ms = max(mA.size(), mB.size()) + mB.size() - 2;
     int size_diff = abs((int)mA.size() - (int)mB.size());
     // выравнивание
     if (mA.size() > mB.size()) {
