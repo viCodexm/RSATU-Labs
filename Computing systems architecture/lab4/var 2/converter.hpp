@@ -202,6 +202,7 @@ string bin_to_hex(string binStr) {
         hexStr += binMap[binStr.substr(i, 4)];
     return hexStr;
 }
+// не возвращает знак
 int bin_to_dec(string binStr) {
     int decimal = 0;
     const int size = binStr.size();

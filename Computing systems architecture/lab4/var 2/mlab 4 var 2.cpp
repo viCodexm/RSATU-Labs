@@ -114,7 +114,12 @@ pOPERATION:
     const int sw = 12;
     make_same_size(mA, mB, 2);
     int mA10 = bin_to_dec(mA);
+    if (binA[0] == '1')
+        mA10 = -mA10;
     int mB10 = bin_to_dec(mB);
+    if (binB[0] == '0')
+        mB10 = -mB10;
+    
     int force_size = mA.size() - 1;
     
     cout << "       А              -B\n";
@@ -137,41 +142,31 @@ pOPERATION:
     cout << "МДК" << setw(sw-1) << with_comma(mA_mdk) << setw(sw-1) << "    " << with_comma(mB_mdk) << "\n";
     cout << "\n";
 
-    // сложение порядков
-    //string mR_mdk = without_leading_zeroes(code_plus_code("0" + mA_mdk, "0"+mB_mdk));
-    /*
-    int ipR10 = ipA10 + ipB10;
-    cout << "ипA(МДК) = " << ipA_mdk << "\n";
-    cout << "ипB(МДК) = " << ipB_mdk << "\n";
-    cout << "ипR(МДК) = " << ipR_mdk << "\n";
-    string ipR2 = to_straight_code(ipR10, ipR10 < 0, 0).substr(2);
-    ipR2 = without_leading_zeroes(ipR2);
-    cout << "ипR(2) = " << ((ipR10 < 0) ? "-" : "") << (ipR2.empty() ? "0" : ipR2) << "\n"; // может быть и плюс и минус
-    cout << "ипR(10) = " << ipR10 << "\n\n"; 
-    
-    */
 pOUT:
     // вычитание
-    const int ms = max(mA.size(), mB.size()) + mB.size();
-    int size_diff = abs((int)mA.size() - (int)mB.size());
+    const int ms = max(mA_mdk.size(), mB_mdk.size()) + mB_mdk.size();
+    int size_diff = abs((int)mA_mdk.size() - (int)mB_mdk.size());
     // выравнивание
-    if (mA.size() > mB.size()) {
-        cout << "A " << setw(ms + size_diff) << mA << "\n"
-             << "B " << setw(ms) << mB << "\n"
+    if (mA_mdk.size() > mB_mdk.size()) {
+        cout << "A " << setw(ms + size_diff) << mA_mdk << "\n"
+             << "B " << setw(ms) << mB_mdk << "\n"
              << string(ms + 2 + size_diff, '-') << "\n";
     }
     else {
         int x = 1;
-        cout << "A " << setw(ms) << mA << "\n"
-             << "B " << setw(ms + size_diff) << mB << "\n"
+        cout << "A " << setw(ms) << mA_mdk << "\n"
+             << "B " << setw(ms + size_diff) << mB_mdk << "\n"
              << string(ms + 2 + size_diff, '-') << "\n";
     }
     
     
-    mA = mA.substr(2);
-    mB = mB.substr(2);
-    string output = zR+zR+"."+code_plus_code("0"+mA,mB+"0");
+    mA_mdk = mA_mdk.substr(2);
+    mB_mdk = mB_mdk.substr(2);
+    string output = zR+zR+"."+code_plus_code("0"+mA_mdk,mB_mdk+"0");
     int mR10 = bin_to_dec(output.substr(3));
+    if (output[0] == '1')
+        mR10 = -mR10;
+    
     cout << setw(ms + 2 + size_diff) << with_comma(output) << "\n\n";
     
     
