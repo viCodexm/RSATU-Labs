@@ -507,7 +507,7 @@ int main()
 					break;
 				}
 				if (sym[0] == 'Y' || sym[0] == 'y') step = 1;
-				if (sym[0] == 'N' || sym[0] == 'n') step = 8;
+				if (sym[0] == 'N' || sym[0] == 'n') step = 7;
 				
 				break;
 			case 7:
@@ -518,11 +518,10 @@ int main()
 					cout << "Ошибка ввода запроса на завершение работы программы!\n";
 					break;
 				}
-				if (sym[0] == 'Y' || sym[0] == 'y') step = 1;
+				if (sym[0] == 'Y' || sym[0] == 'y') return 0;
 				if (sym[0] == 'N' || sym[0] == 'n') step = 0;
 
 				break;
-
 
 
 		}
