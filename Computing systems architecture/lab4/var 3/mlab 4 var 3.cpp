@@ -51,10 +51,6 @@ p2:
         cout << "\nОшибка ввода исходных чисел\n\n";
         goto p1;
     }
-    if (hexA == "00000000" || hexB == "00000000") {
-        cout << "R(2) = 0\nR(16) = 0\n";
-        goto p1;
-    }
 
 pUnpacking:
     string binA = hex_to_bin(hexA), binB = hex_to_bin(hexB);
@@ -75,9 +71,11 @@ pUnpacking:
          << "zB = " << binB[0] << "\n"
          << "спB(2) = " << space_wrapper(binB.substr(1, 8)) << "\n"
          << "спB(10) = " << bin_to_dec(binB.substr(1, 8)) << "\n"
-         << "ипB(10) = " << ipB10 << "\n"
-         << "mB = " << mB << "\n"
-         << "\n";
+         << "ипB(10) = " << ipB10 << "\n";
+         if (mB == "0,")
+            cout << "mB = 0\n";
+        else cout << "mB = " << mB << "\n";
+        cout << "\n";
 
 p4:
     cout << "Введите номер выполняемой операции m:\n"
@@ -97,6 +95,11 @@ p5:
     }
 
 pOPERATION:
+    if (hexA == "00000000" || hexB == "00000000") {
+        cout << "R(2) = 0\nR(16) = 0\n";
+        cin.ignore();
+        goto p1;
+    }
 
     cout << "\n3 A*B\n";
     char zR = ((binA[0] - '0') + (binB[0] - '0') == 1) ? '1' : '0';
