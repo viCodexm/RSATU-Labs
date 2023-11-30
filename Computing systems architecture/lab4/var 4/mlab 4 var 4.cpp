@@ -519,7 +519,7 @@ int main()
 					break;
 				}
 				if (sym[0] == 'Y' || sym[0] == 'y') return 0;
-				if (sym[0] == 'N' || sym[0] == 'n') step = 0;
+				if (sym[0] == 'N' || sym[0] == 'n') step = 1;
 
 				break;
 
