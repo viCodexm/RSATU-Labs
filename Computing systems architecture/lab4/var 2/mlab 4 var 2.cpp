@@ -96,133 +96,107 @@ p5:
         goto p4;
     }
     // ипА < ипБ ?
-    // сдвиг мантиссы -> результат меняется
+    // сдвиг мантиссы -> результат меняется (?)
 pOPERATION:
 
     cout << "\n2 A-B\n";
     string zA = to_string(binA[0] - '0');
     string zB = to_string(binB[0] - '0');
 
-    string zR = (((binA[0] - '0') + (binB[0] - '0') == 1) ? "1" : "0");
+    string zR = "";
+    
+    if (binA > binB) { // из большего вычитаем меньшее
+        if (zA == "1")
+            zR = "1";
+        else zR = "0";
+    } else { // из меньшего большее вычитаем (складываем)
+        if (zB == "1") // минус отрицательное == плюс положительное
+            zR = "0"; 
+        else zR = "1";
+    }
+
+        
     cout << "zR = zA (+) zB = "
     << zA << " (+) " << zB
     << " = " 
-    << zR
+    << zR // (?)
     << "\n\n";
-    
+    if (zB == "0")
+        zB = "1";
+    else zB = "0";
 
     
     const int sw = 12;
-    make_same_size(mA, mB, 2);
-    int mA10 = bin_to_dec(mA);
-    if (binA[0] == '1')
-        mA10 = -mA10;
-    int mB10 = bin_to_dec(mB);
-    if (binB[0] == '0')
-        mB10 = -mB10;
+    int m_size = 1 + max(mA.size(), mB.size());
+    if (ipA10 < ipB10) { // надеюсь это правильно
+        mA = mA.substr(0, 2)+string(m_size - mA.size(), '0') + mA.substr(2);
+        mB += string(m_size - mB.size(), '0');
+    } else {
+        make_same_size(mA, mB, 2);
+    }
     
-    int force_size = mA.size() - 1;
+
+    //int mA10 = bin_to_dec(mA);
+    //int mB10 = bin_to_dec(mB);
+        
     
+    // если знак 0, то все опреации игнорируются и выводится просто mA(mB)
+    // ((zB == "1") ? ... : ___ означает: если знак отрицательный делай это ? ... иначе делай это : ___
     cout << "       А              -B\n";
-    cout << "ПК" << setw(sw) << with_comma(to_straight_code(mA10, mA10 < 0, force_size))
-         << setw(sw) << "    " << with_comma(to_straight_code(mB10, mB10 < 0, force_size)) << "\n";
-    
-    string revA = to_reverse_code(mA10, mA10 < 0, force_size), revB = to_reverse_code(mB10, mB10 < 0, force_size);
-    make_same_size(revA, revB, 2);
-    cout << "OК" << setw(sw) << with_comma(revA) << setw(sw) << "    " << with_comma(revB) << "\n";
-    
-    string extA = to_extended_code(mA10, mA10 < 0, force_size), extB = to_extended_code(mB10, mB10 < 0, force_size);
-    make_same_size(extA, extB, 2);
-    cout << "ДК" << setw(sw) << with_comma(extA)
-    << setw(sw) << "    " << with_comma(extB) << "\n";
-
-    string mA_mdk = to_mod_extended_code(mA10, mA10 < 0, force_size);
-    string mB_mdk = to_mod_extended_code(mB10, mB10 < 0, force_size);
-    make_same_size(mA_mdk, mB_mdk, 3);
-
-    cout << "МДК" << setw(sw-1) << with_comma(mA_mdk) << setw(sw-1) << "    " << with_comma(mB_mdk) << "\n";
+    cout << "ПК" << setw(sw) << zA+"."+mA << setw(sw) << zB+"."+mB << "\n";
+    cout << "OК" << setw(sw) << zA+"."+((zA == "1") ? code_reverse(mA) : mA) << setw(sw) << zB+"."+((zB == "1") ? code_reverse(mB) : mB) << "\n";
+    cout << "ДК" << setw(sw) << zA+"."+((zA == "1") ? code_add_one(code_reverse(mA)) : mA) << setw(sw) << zB+"."+((zB == "1") ? code_add_one(code_reverse(mB)) : mB) << "\n";
+    cout << "МДК" << setw(sw-1) << zA+zA+"."+((zA == "1") ? code_add_one(code_reverse(mA)) : mA) << setw(sw-1) << zB+zB+"."+((zB == "1") ? code_add_one(code_reverse(mB)): mB) << "\n";
     cout << "\n";
 
 pOUT:
     // вычитание
-    const int ms = max(mA_mdk.size(), mB_mdk.size()) + mB_mdk.size();
-    int size_diff = abs((int)mA_mdk.size() - (int)mB_mdk.size());
-    // выравнивание
-    if (mA_mdk.size() > mB_mdk.size()) {
-        cout << "A " << setw(ms + size_diff) << mA_mdk << "\n"
-             << "B " << setw(ms) << mB_mdk << "\n"
-             << string(ms + 2 + size_diff, '-') << "\n";
+    string mdkA = zA+zA+"."+((zA == "1") ? code_add_one(code_reverse(mA)) : mA);
+    string mdkB = zB+zB+"."+((zB == "1") ? code_add_one(code_reverse(mB)) : mB);
+    string mdkR = code_plus_code("0"+mdkA, "0"+mdkB);
+    cout << "A  " << setw(sw) << mdkA << "\n";
+    cout << "B  " << setw(sw) << mdkB << "\n";
+    cout << string(sw + m_size, '-') << "\n";
+    cout << setw(3 + sw) << mdkR << "\n";
+
+    // теперь если результат отрицательный - разворачиваем его обратно мдк->ок->пк->двоичка
+    string mR = mdkR.substr(4, mdkR.size() - 4);
+    if (mdkR[0] == '1') { // (?)
+        cout << "R(МДК) = " << mdkR.substr(1) << "\n";
+        cout << "R(ДК) = " << mdkR.substr(2) << "\n";
+        mR = code_minus_one(mR);
+        cout << "R(ОК) = " << zR+"."+mR << "\n";
+        mR = code_reverse(mR);
+        cout << "R(ПК) = " << zR+"."+mR << "\n";
     }
-    else {
-        int x = 1;
-        cout << "A " << setw(ms) << mA_mdk << "\n"
-             << "B " << setw(ms + size_diff) << mB_mdk << "\n"
-             << string(ms + 2 + size_diff, '-') << "\n";
-    }
+    cout << "\n";
     
-    
-    mA_mdk = mA_mdk.substr(2);
-    mB_mdk = mB_mdk.substr(2);
-    string output = zR+zR+"."+code_plus_code("0"+mA_mdk,mB_mdk+"0");
-    int mR10 = bin_to_dec(output.substr(3));
-    if (output[0] == '1')
-        mR10 = -mR10;
-    
-    cout << setw(ms + 2 + size_diff) << with_comma(output) << "\n\n";
-    
-    
-    cout << "mR = " << with_comma(output) << "\n";
-    if (zR == "1") {
-        cout << "R(МДК) = " << with_comma(to_mod_extended_code(mR10, mR10 < 0, force_size)) << "\n";
-        cout << "R(ДК) = " << with_comma(to_extended_code(mR10, mR10 < 0, force_size)) << "\n";
-        cout << "R(ОК) = " << with_comma(to_reverse_code(mR10, mR10 < 0, force_size)) << "\n";
-        cout << "R(ПК) = " << with_comma(to_straight_code(mR10, mR10 < 0, force_size)) << "\n";
+    // нормализация (надеюсь тут сдвиг может быть только на один)
+    int normalisation = 0;
+    if (mR[0] == '1') {
+        swap(mR[0], mR[1]); // поменяли запятую с единицей местами
+        mR = "0" + mR;
+        normalisation++;
     }
     
-    int spR10 = max(ipA10, ipB10) + 127;
-    cout << "спR(2) = " << to_straight_code(spR10, spR10 < 0, force_size).substr(2) << "\n";
+    int spR10 = max(ipA10, ipB10) + 127 + normalisation;
+    string spR2 = without_leading_zeroes(to_straight_code(spR10, spR10 < 0, 8).substr(2));
+    if (spR2.empty())
+        spR2 = "0";
+        
+    cout << "спR(2) = " << space_wrapper(spR2) << "\n";
     cout << "спR(10) = " << spR10 << "\n";
 
 
-    string mR = to_straight_code(mR10, mR10 < 0, force_size).substr(2);
-    int leading_zeros = 0;
-    while (leading_zeros < mR.size() && mR[leading_zeros] == '0')
-        leading_zeros++;
 
-    string R2 = zR + to_straight_code(spR10, spR10 < 0, force_size).substr(2) + mR.substr(leading_zeros);
+    string R2 = zR + spR2 + mR.substr(2);
     int diff = 32 - R2.size();
     if (diff > 0)
         R2 += string(diff, '0');
 
     cout << "R(2) = " << space_wrapper(R2) << "\n";
     cout << "R(16) = " << space_wrapper(bin_to_hex(R2)) << "\n";
-    
-p7:
-    // Если требуется нормализация, то выводим
- /*   bool need_normalization = output[0] == '0';
-    int leading_zeros = 0;
-    while (leading_zeros < output.size() && output[leading_zeros] == '0')
-        leading_zeros++;
 
-    cout << "\n";
-    if (need_normalization) // не учитывается сдвиг в другую сторону (нет примеров)
-        cout << "mRн = " << "0," + output.substr(leading_zeros) << "\n"
-            << "ипRн(10) = " << ipR10 + leading_zeros << "\n";
-
-    int spR10 = ipR10 + 127 - leading_zeros; // leading_zeros - normalisation
-    bitset<8> bst_spr(spR10);
-    string spR2 = bst_spr.to_string();
-    string R2 = zR + spR2 + output.substr(leading_zeros);
-    int diff = 32 - R2.size();
-    if (diff > 0)
-        R2 += string(diff, '0');
-    string R16 = bin_to_hex(R2);
-
-    cout << "спR(10) = " << spR10 << "\n"
-         << "спR(2) = " << spR2 << "\n"
-         << "R(2) = " << space_wrapper(R2) << "\n"
-         << "R(16) = " << space_wrapper(R16) << "\n";
-*/
 p8:
     cout << "Изменить значения исходных чисел?\n";
     response = char_input("(Y - да / N - нет)\n");

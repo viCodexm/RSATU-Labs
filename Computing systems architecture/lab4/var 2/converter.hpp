@@ -8,7 +8,10 @@ using namespace std;
 string code_reverse(string code) {
 
     for (int i = 0; i < code.size(); ++i)
-        (code[i] == '1') ? code[i] = '0' : code[i] = '1';
+        if (code[i] == '1')
+            code[i] = '0';
+        else if (code[i] == '0')
+            code[i] = '1';
 
     return code;
 }
@@ -24,11 +27,20 @@ string code_add_one(string code) {
     }
     return code;
 }
+string code_minus_one(string code) {
+    int i = code.size() - 1;
+    while (code[i] != '1') {
+        if (code[i] == '0')
+            code[i] = '1';
+    }
+    code[i] = '0';
+    return code;
+}
 // assume that a.size == b.size
 string code_plus_code(string a, string b) {
     int carry = 0;
     for (int i = a.size() - 1; i >= 0; --i) {
-        if (a[i] == '.')
+        if (a[i] == '.' || a[i] == ',')
             continue;
         
         int count = ((a[i] == '1') + (b[i] == '1')) + min(1, carry);
