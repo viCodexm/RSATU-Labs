@@ -473,7 +473,7 @@ int main()
 					cout << "ИПRн(10) = " << IPR10 << endl;
 				}
 				else
-				{
+				if (MR[2] == '0') {
 					while (MR[2] != '1')
 					{
 						MR.erase(0, 2);
