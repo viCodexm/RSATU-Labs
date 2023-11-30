@@ -51,10 +51,6 @@ p2:
         cout << "\nОшибка ввода исходных чисел\n\n";
         goto p1;
     }
-    if (hexA == "00000000" || hexB == "00000000") {
-        cout << "R(2) = 0\nR(16) = 0\n";
-        goto p1;
-    }
 
 pUnpacking:
     string binA = hex_to_bin(hexA), binB = hex_to_bin(hexB);
