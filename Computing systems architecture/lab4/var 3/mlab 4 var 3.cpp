@@ -174,6 +174,10 @@ pOUT:
             make_same_size(output, buf, 0);
             output = code_plus_code(output, buf);
         }
+        else {
+            string buf = "0" + output;
+            make_same_size(output, buf, false);
+        }
         offset++;
     }
     cout << string(ms + 2 + size_diff, '-') << "\n";
