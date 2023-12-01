@@ -90,7 +90,20 @@ p5:
         goto p4;
     }
     if (m != 3) {
-        cout << "\nОперация не реализована\n\n";
+        switch (m)
+        {
+        case (1):
+            cout << "\nОперация A+B не реализована\n\n";
+            break;
+        case (2):
+            cout << "\nОперация A-B не реализована\n\n";
+            break;
+        case (4):
+            cout << "\nОперация A/B не реализована\n\n";
+            break;
+        default:
+            break;
+        }
         goto p4;
     }
 
@@ -139,9 +152,10 @@ pOPERATION:
     // сложение порядков
     string ipR_mdk = without_leading_zeroes(code_plus_code("0" + ipA_mdk, "0"+ipB_mdk));
     int ipR10 = ipA10 + ipB10;
-    cout << "ипA(МДК) = " << ipA_mdk << "\n";
-    cout << "ипB(МДК) = " << ipB_mdk << "\n";
-    cout << "ипR(МДК) = " << ipR_mdk << "\n";
+    cout << setw(10) << ipA_mdk << "\n";
+    cout << "+" << setw(9) << ipB_mdk << "\n";
+    cout << setw(10) << string(ipA_mdk.size(), '-') << "\n";
+    cout << setw(10) << ipR_mdk.substr(1) << "\n";
     string ipR2 = to_straight_code(ipR10, ipR10 < 0, 0).substr(2);
     ipR2 = without_leading_zeroes(ipR2);
     cout << "ипR(2) = " << ((ipR10 < 0) ? "-" : "") << (ipR2.empty() ? "0" : ipR2) << "\n"; // может быть и плюс и минус
@@ -154,14 +168,14 @@ pOUT:
     int size_diff = abs((int)mA.size() - (int)mB.size());
     // выравнивание
     if (mA.size() > mB.size()) {
-        cout << "mA" << setw(ms + size_diff) << mA << "\n"
-             << "mB" << setw(ms) << mB << "\n"
+        cout << setw(2 + ms + size_diff) << mA << "\n"
+             << setw(2 + ms) << mB << "\n"
              << string(ms + 2 + size_diff, '-') << "\n";
     }
     else {
         int x = 1;
-        cout << "mA" << setw(ms) << mA << "\n"
-             << "mB" << setw(ms + size_diff) << mB << "\n"
+        cout << setw(2 + ms) << mA << "\n"
+             << setw(2 + ms + size_diff) << mB << "\n"
              << string(ms + 2 + size_diff, '-') << "\n";
     }
     
@@ -184,7 +198,7 @@ pOUT:
         offset++;
     }
     cout << string(ms + 2 + size_diff, '-') << "\n";
-    cout << setw(ms + 2 + size_diff) << output << "\n\n";
+    cout << setw(ms + 2 + size_diff) << "0," + output << "\n\n";
     
     cout << "mR = " << "0," + output << "\n";
     
@@ -198,7 +212,7 @@ p7:
     cout << "\n";
     if (need_normalization) // не учитывается сдвиг в другую сторону (нет примеров)
         cout << "mRн = " << "0," + output.substr(leading_zeros) << "\n"
-            << "ипRн(10) = " << ipR10 + leading_zeros << "\n";
+            << "ипRн(10) = " << ipR10 - leading_zeros << "\n";
 
     int spR10 = ipR10 + 127 - leading_zeros; // leading_zeros - normalisation
     bitset<8> bst_spr(spR10);
@@ -212,7 +226,7 @@ p7:
     cout << "спR(10) = " << spR10 << "\n"
          << "спR(2) = " << spR2 << "\n"
          << "R(2) = " << space_wrapper(R2) << "\n"
-         << "R(16) = " << space_wrapper(R16) << "\n";
+         << "R(16) = " << R16 << "\n";
 
 p8:
     cout << "Изменить значения исходных чисел?\n";
