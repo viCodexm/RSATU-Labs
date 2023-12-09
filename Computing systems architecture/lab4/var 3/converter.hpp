@@ -171,7 +171,6 @@ string space_wrapper(string output) {
 bool isHex(string str) {
     if (str.size() != 8)
         return false;
-    bool ok = true;
     for (char& c : str)
         if (not(('A' <= c && c <= 'F') || isdigit(c)))
             return false;

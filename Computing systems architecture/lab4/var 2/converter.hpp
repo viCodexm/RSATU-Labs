@@ -184,8 +184,8 @@ bool isHex(string str) {
     if (str.size() != 8)
         return false;
     for (char& c : str)
-        if (not(('A' <= c && c <= 'Z') || isdigit(c)))
-            return true;
+        if (not(('A' <= c && c <= 'F') || isdigit(c)))
+            return false;
     return true;
 }
 string hex_to_bin(string hexStr) {
