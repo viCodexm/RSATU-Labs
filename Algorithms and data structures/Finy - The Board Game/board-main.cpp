@@ -1,6 +1,7 @@
 
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 using namespace std;
 
@@ -114,12 +115,17 @@ struct Board {
     vector<vector<ReactiveRectangle>> cells;
     WinnerBoard winnerboard; //playmodeboard
     vector<pair<int, int>> marked;
+    
+    sf::SoundBuffer buffer;
+    sf::Sound popSound;
     int pressed_idx = -1;
     int ready_to_move_idx = -1;
     int player_move = 1;
     int win = false, restart = false;
     
     Board() {
+        buffer.loadFromFile("long-pop.wav");
+        popSound.setBuffer(buffer);
         cells.resize(8, vector<ReactiveRectangle>(3));
         for (int i = 0; i < 8; ++i) {
             for (int j = 0; j < 3; ++j) {
@@ -199,6 +205,9 @@ struct Board {
                         player_move ?
                             swap(cells[a.first][a.second].isGamePiecePlayer, cells[b.first][b.second].isGamePiecePlayer)
                             :swap(cells[a.first][a.second].isGamePieceEnemy, cells[b.first][b.second].isGamePieceEnemy);
+                        
+                        popSound.play();
+                        
                         pressed_idx = -1;
                         player_move = !player_move;
                         win = check_win();
@@ -234,13 +243,13 @@ struct Board {
                 });
         }
         else if (win == 1) {
-            for (auto& row : cells)
-            for_each(row.begin(), row.end(), [&](ReactiveRectangle& cell) {cell.setFillColor(COLOR_RED); window.draw(cell);});
+            //for (auto& row : cells)
+            //for_each(row.begin(), row.end(), [&](ReactiveRectangle& cell) {cell.setFillColor(COLOR_RED); window.draw(cell);});
             winnerboard.set_message("Red player won!", COLOR_RED);
         }
         else if (win == 2) {
-            for (auto& row : cells)
-            for_each(row.begin(), row.end(), [&](ReactiveRectangle& cell) {cell.setFillColor(COLOR_BLUE); window.draw(cell);});
+            //for (auto& row : cells)
+            //for_each(row.begin(), row.end(), [&](ReactiveRectangle& cell) {cell.setFillColor(COLOR_BLUE); window.draw(cell);});
             winnerboard.set_message("Blue player won!", COLOR_BLUE);
         }
         
@@ -361,6 +370,8 @@ int main() {
     cout << dfs(bot, 2, 4, 6, 15, 19, 23, moves, dp) << endl;
     cout << dfs(player, 2, 4, 6, 15, 19, 23, moves, dp) << endl;
     */
+
+
     sf::RenderWindow window(sf::VideoMode(SCREEN_WIDTH, SCREEN_HEIGHT), "Finy - The Board Game", sf::Style::Titlebar | sf::Style::Close);
     while (window.isOpen()) {
         round(window);
