@@ -29,7 +29,8 @@ public:
         return coords[x];
     }
     void print(int x) {
-        cout << "x: " << x << " y: " << this->get_y(x) << "\n";
+        if (get_y(x) != -1)
+            cout << "x: " << x << " y: " << this->get_y(x) << "\n";
     }
     void print_values() {
         if (coords.empty())
