@@ -2,6 +2,8 @@
 #include "Consts.hpp"
 #include "ReactiveRectangle.hpp"
 #include "WinnerBoard.hpp"
+#include <chrono>
+#include <random>
 using namespace std;
 
 struct Board {
@@ -10,10 +12,12 @@ struct Board {
         int row, from, to;
         sf::Clock startTimeStamp;
     };
+    //std::mt19937 rng(std::chrono::steady_clock::now().time_since_epoch().count());
     SmoothMoveAnimator moveAnimator;
     vector<vector<ReactiveRectangle>> cells;
     WinnerBoard winnerboard;
     GameModeBoard gameModeBoard;
+    ChooseMoveBoard chooseMoveBoard;
     vector<pair<int, int>> marked;
     
     sf::SoundBuffer buffer;
@@ -21,7 +25,7 @@ struct Board {
     int pressed_idx = -1;
     int ready_to_move_idx = -1;
     int player_move = 1;
-    int win = false, restart = false, set_once = false;
+    int win = false, restart = false, set_once = false, only_once = false;
     
     Board() {
         buffer.loadFromFile("long-pop.wav");
@@ -53,7 +57,15 @@ struct Board {
             gameModeBoard.logic(window);
             return;
         }
-        if (!win)
+        if (gameModeBoard.gamemode == 2 && chooseMoveBoard.player_color == -1) {
+            chooseMoveBoard.logic(window);
+            return;
+        }
+        if (chooseMoveBoard.player_color != -1 && !only_once) {
+            only_once = true;
+            player_move = (chooseMoveBoard.player_color == 2);
+        }
+        if (!win) 
             play_the_game(window);
         else if (!set_once) {
             set_once = true;
@@ -108,7 +120,10 @@ struct Board {
                         ready_to_move_idx = idx;
                 }   
                 auto [a, b] = getCoordinates(ready_to_move_idx);
-                bool needHints = cell.pressed && ((cell.isGamePieceEnemy && !player_move) || (cell.isGamePiecePlayer && player_move));
+                bool needHints = cell.pressed;
+                if (chooseMoveBoard.player_color == 2)
+                    needHints = needHints && ((cell.isGamePieceEnemy && !player_move) || (cell.isGamePiecePlayer && player_move));
+                else needHints = needHints && ((cell.isGamePiecePlayer && !player_move) || (cell.isGamePieceEnemy && player_move));
                 if (needHints)
                     add_hints(a, b);
 
@@ -118,7 +133,11 @@ struct Board {
                 }
                     
                 auto [x, y] = getCoordinates(idx);
-                bool moveBelongsToPlayer = ((cells[a][b].isGamePieceEnemy && !player_move) || (cells[a][b].isGamePiecePlayer && player_move));
+                bool moveBelongsToPlayer = false;
+                if (chooseMoveBoard.player_color == 2)
+                    moveBelongsToPlayer = ((cells[a][b].isGamePieceEnemy && !player_move) || (cells[a][b].isGamePiecePlayer && player_move));
+                else moveBelongsToPlayer = ((cells[a][b].isGamePieceEnemy && player_move) || (cells[a][b].isGamePiecePlayer && !player_move));
+                
                 bool moveToEmptyCell = !cell.isGamePieceEnemy && !cell.isGamePiecePlayer;
                 bool sameRow = b == y;
 
@@ -221,14 +240,57 @@ private:
                     else if (dist2 == cur[j] - '0') j = 1;
                     else j = 2;
                     // enemy - red
-                    init_smooth_moveAnimation(p[2*j+1], p[2*j+1]-offset, j);
-                    
+                    if (chooseMoveBoard.player_color == 2)
+                        init_smooth_moveAnimation(p[2*j+1], p[2*j+1]-offset, j);
                     // enemy - blue
-                    //init_smooth_moveAnimation(p[2*j], p[2*j]+offset, j);
+                    else init_smooth_moveAnimation(p[2*j], p[2*j]+offset, j); 
+                    
                     return;
                 }
             }
         }
+        //
+        if (dist1 + dist2 + dist3 == 0) {
+            if (dist1 == 0 && (!cells[0][0].isGamePiecePlayer && !cells[0][0].isGamePieceEnemy)) {
+            //if (dist1 == 0) {
+                int j = 0;
+                if (chooseMoveBoard.player_color == 2)
+                    init_smooth_moveAnimation(p[2*j+1], 0, j);
+                else init_smooth_moveAnimation(p[2*j], 0, j);
+            } else
+            if (dist2 == 0 && (!cells[0][1].isGamePiecePlayer && !cells[0][1].isGamePieceEnemy)) {
+            //if (dist2 == 0) {
+                int j = 1;
+                if (chooseMoveBoard.player_color == 2)
+                    init_smooth_moveAnimation(p[2*j+1], 0, j);
+                else init_smooth_moveAnimation(p[2*j], 0, j);
+            } else
+            if (dist3 == 0 && (!cells[0][2].isGamePiecePlayer && !cells[0][2].isGamePieceEnemy)) {
+            //if (dist3 == 0) {
+                int j = 2;
+                if (chooseMoveBoard.player_color == 2)
+                    init_smooth_moveAnimation(p[2*j+1], 0, j);
+                else init_smooth_moveAnimation(p[2*j], 0, j);
+            }
+            return;
+        }
+        // else - optimal move not found
+        int offset = -1, j = -1;
+        vector<int> dists = {dist1, dist2, dist3};
+        while (true) {
+            j = rand() % dists.size();
+            if (dists[j] > 0) {
+                offset = rand() % dists[j];
+                if (offset == 0)
+                    offset = 1;
+                break;
+            }
+        }
+        // enemy - red
+        if (chooseMoveBoard.player_color == 2)
+            init_smooth_moveAnimation(p[2*j+1], p[2*j+1]-offset, j);
+            // enemy - blue
+        else init_smooth_moveAnimation(p[2*j], p[2*j]+offset, j);
     }
 
     void after_move_cleanup() {

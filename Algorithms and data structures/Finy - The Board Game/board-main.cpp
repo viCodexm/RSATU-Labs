@@ -24,8 +24,11 @@ void round(sf::RenderWindow& window) {
             if (board.restart)
                 return;
         }
-
-        board.player_move ? t = max(0.0, t - 0.0025) : t = min(1.0, t + 0.0025);
+        
+        if (board.chooseMoveBoard.player_color == 2)
+            board.player_move ? t = max(0.0, t - 0.0025) : t = min(1.0, t + 0.0025);
+        else board.player_move ? t = min(1.0, t + 0.0025) : t = max(0.0, t - 0.0025);
+        
         window.clear(lerp(COLOR_BACKGROUND_BLUE, COLOR_BACKGROUND_RED, t));
         board.logic(window);
         window.display();
