@@ -34,7 +34,7 @@ public:
         }
         for (int e : path | views::reverse)
             cout << e << " ";
-        cout << "\n";
+        cout << "\nДлина: " << path.size() << "\n";
     }
 
     int lengthOfLIS(vector<int>& nums) {
@@ -92,7 +92,9 @@ public:
         vector<vector<int>> dp(m + 1, vector<int>(n + 1, 0));
         for (int i = 1; i <= m; ++i)
             for (int j = 1; j <= n; ++j)
-                dp[i][j] = (b[i] == a[j]) + max(dp[i - 1][j], dp[i][j - 1]);
+                if (b[i] == a[j])
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                else dp[i][j] = max(dp[i - 1][j], dp[i][j - 1]);
         
         for (vector<int>& v : dp) {
             for (int e : v)
@@ -103,19 +105,19 @@ public:
         int sx = dp.size() - 1, sy = dp.back().size() - 1;
         vector<int> path;
         while (dp[sx][sy] != 0) {
-            if (sx > 1) {
-                if (dp[sx][sy] != dp[sx - 1][sy])
-                    path.push_back(dp[sx][sy]);
-                sx--;
-            } else {
-                if (dp[sx][sy] != dp[sx][sy - 1])
-                    path.push_back(dp[sx][sy]);
-                sy--;
+            if (a[sy] == b[sx]) {
+                path.push_back(a[sy]);
+                sx--; sy--;
+            }
+            else {
+                if (dp[sx][sy - 1] == dp[sx][sy])
+                    sy--;
+                else sx--;
             }
         }
         reverse(path.begin(), path.end());
         cout << "Последовательность: ";
-        for (int e : path)
+        for (auto e : path)
             cout << e << " ";
         cout << "\n";
     }
@@ -125,7 +127,7 @@ int main() {
     freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
     Solution a;
-    a.solve_problem1();
+    //a.solve_problem1();
     a.solve_problem2();
     
     
