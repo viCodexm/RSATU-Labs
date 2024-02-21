@@ -38,6 +38,15 @@ struct AutoQueue {
                 : q.push_back(make_shared<Truck>(fio, data, type));
         }
     }
+    pair<int, int> get_info() {
+        int passengers = 0; float weight = 0;
+        for (const auto& automobile : q)
+            if (auto car = dynamic_pointer_cast<PassengerCar>(automobile))
+                passengers += car->passengers;
+            else if (auto truck = dynamic_pointer_cast<Truck>(automobile))
+                weight += truck->weight;
+        return {passengers, weight};
+    }
     vector<string> get_fios() {
         vector<string> res;
         for (const auto& automobile : q)
