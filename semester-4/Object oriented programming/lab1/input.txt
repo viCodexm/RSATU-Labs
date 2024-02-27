@@ -1,0 +1,4 @@
+p dmitry 6 26 4 5
+p sergey 6 26 4 2
+t alexey 12 40 4 3400
+t arsen 12 40 4 6250
