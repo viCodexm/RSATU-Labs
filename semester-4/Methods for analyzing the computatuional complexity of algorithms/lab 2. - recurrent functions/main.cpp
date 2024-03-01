@@ -22,7 +22,7 @@ public:
     }
 
     double calc(float x, int sign) {
-        double t = x, s = x, eps = 0.0001;
+        double t = x, s = x, eps = 0.000001;
         for (int n = 3; fabs(t) > eps; n += 2)
             s += t = -t * x * x / n / (n - 1);
         return s * sign;
@@ -101,7 +101,7 @@ public:
         cout << "a = " << a << "\n";
         cout << "ln(a) Ряд Тейлора: " << taylor_log(a) << "\n";
         cout << "ln(a) Стандартная функция языка: " << log(a) << "\n";
-        cout << "e^(x ln a) Ряд Тейлора: " << taylor_exp(x * log(a), 0.00001) << "\n";
+        cout << "e^(x ln a) Ряд Тейлора: " << taylor_exp(x * log(a), 0.01) << "\n";
         cout << "e^(x ln a) Стандартная функция языка: " << exp(x * log(a)) << "\n";
         cout << "a^(x): " << pow(a, x) << "\n";
     }
