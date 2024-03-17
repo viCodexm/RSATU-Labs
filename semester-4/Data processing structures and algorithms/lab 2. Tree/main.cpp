@@ -102,14 +102,62 @@ struct BalancedTree {
         }
         return 0;
     }
+
+    bool deleteNode(int val) {
+        return deleteNode(root, val);
+    }
+    TreeNode* deleteNode(TreeNode* cur, int val) {
+        if (!cur)
+            return cur;
+        if (val > cur->val)
+            deleteNode(cur->right, val);
+        else if (val < cur->val)
+            deleteNode(cur->left, val);
+        else {
+            // one child or no child
+            if (root->left == NULL) {
+                TreeNode* temp = root->right;
+                delete root;
+                return temp;
+            } else if (root->right == NULL) {
+                TreeNode* temp = root->left;
+                delete root;
+                return temp;
+            }
+            // two children
+            //TreeNode* temp = minValueNode(root->right);
+            //root->val = temp->val;
+            //root->right = deleteNode(root->right, temp->val);
+        }
+    }
+
+    TreeNode* deleteNode2(TreeNode* root, int key) {
+        if(root) 
+            if (key < root->val) root->left = deleteNode2(root->left, key);     //We frecursively call the function until we find the target node
+            else if (key > root->val) root->right = deleteNode2(root->right, key);       
+            else{
+                if (!root->left && !root->right) return NULL;          //No child condition
+                if (!root->left || !root->right)
+                    return root->left ? root->left : root->right;    //One child contion -> replace the node with it's child
+					                                                //Two child condition   
+                TreeNode* temp = root->left;                        //(or) TreeNode *temp = root->right;
+                while(temp->right != NULL) temp = temp->right;     //      while(temp->left != NULL) temp = temp->left;
+                root->val = temp->val;                            //       root->val = temp->val;
+                root->left = deleteNode2(root->left, temp->val);  //        root->right = deleteNode(root->right, temp);		
+            }
+        return root;
+    }
 };
 struct Solution {
     
     void solve() {
         cout << "Формирование идеально сбалансированного дерева:\n";
         //cout << "Введите n: "; int n; cin >> n;
-        vector<int> v = {1, 2, 3, 4, 5, 6, 7};
+        vector<int> v = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18};
         BalancedTree bt(v);
+        bt.print();
+        bt.deleteNode2(bt.root, 14);
+        cout << "Дерево после удаления узла:\n";
         bt.print();
         cout << "Высота дерева: " << bt.maxDepth() << "\n";
         cout << "Количество узлов: " << bt.countNodes() << "\n";
@@ -138,14 +186,27 @@ struct Solution {
         if (n > 0)
             return cache[{m, n}] = a(m - 1, a(m, n - 1));
     }
+    
+};
+
+class Solution2 {
+public:
+    struct TreeNode {
+        int val;
+        TreeNode *left;
+        TreeNode *right;
+        TreeNode() : val(0), left(nullptr), right(nullptr) {}
+        TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+        TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+    };
 };
 
 int main() {
     freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
     Solution a;
-    //a.solve();
-    a.akkerman();
+    a.solve();
+    //a.akkerman();
 
     return 0;
 }
