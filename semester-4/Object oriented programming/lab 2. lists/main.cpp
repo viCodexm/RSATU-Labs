@@ -82,15 +82,7 @@ struct List {
 
 
 
-int main(int argc, char *argv[]) {
-//    QApplication app(argc, argv);
-//    app.beep();
-    //MyInterface ui; // Создание экземпляра интерфейса
-    //QObject::connect(&ui.myButton, &QPushButton::clicked, MyFunction); // Соединение сигнала clicked() кнопки с функцией MyFunction
-    //ui.show();
-    //return app.exec();
-//    return app.exec();
-//}
+int main() {
     List lst;
     for (int i = 5; i < 10; ++i)
         lst.add_node(make_shared<numNode>(i));
