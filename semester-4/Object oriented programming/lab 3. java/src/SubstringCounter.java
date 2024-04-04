@@ -10,25 +10,57 @@ public class SubstringCounter {
 
         String inputFile = args[0];
         String outputFile = args[1];
+
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter the substring to search for:");
+        System.out.print("Введите подстроку для поиска: ");
         String substring = scanner.nextLine();
 
         try (FileReader reader = new FileReader(inputFile);
-             BufferedReader br = new BufferedReader(reader)) {
+             BufferedReader br = new BufferedReader(reader);
+             FileWriter writer = new FileWriter(outputFile)) {
+
+            List<LineCount> lineCounts = new ArrayList<>();
             String line;
-            PriorityQueue<String> queue = new PriorityQueue<>(Comparator.comparingInt(s -> -s.split(substring, -1).length + 1));
             while ((line = br.readLine()) != null) {
-                queue.add(line);
+                int count = (line.length() - line.replace(substring, "").length()) / substring.length();
+                lineCounts.add(new LineCount(line, count));
             }
 
-            try (FileWriter writer = new FileWriter(outputFile)) {
-                while (!queue.isEmpty()) {
-                    writer.write(queue.poll() + System.lineSeparator());
-                }
+            lineCounts.sort(Comparator.comparing(LineCount::getCount).reversed());
+
+            StringBuilder result = new StringBuilder();
+            for (LineCount lc : lineCounts) {
+                result.append(lc.getLine()).append(": ").append(lc.getCount()).append(System.lineSeparator());
             }
+
+            writeStringBuilderContent(result, writer);
+            System.out.println(result.toString());
+
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public static void writeStringBuilderContent(StringBuilder content, FileWriter writer) throws IOException {
+        writer.write(content.toString());
+    }
+
+
+    static class LineCount {
+        private String line;
+        private int count;
+
+        public LineCount(String line, int count) {
+            this.line = line;
+            this.count = count;
+        }
+
+        public String getLine() {
+            return line;
+        }
+
+        public int getCount() {
+            return count;
         }
     }
 }
