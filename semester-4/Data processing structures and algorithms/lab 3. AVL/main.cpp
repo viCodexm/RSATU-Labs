@@ -221,7 +221,7 @@ struct Solution {
         cout << "\n";
     }
     void solve_ins_del() {
-        unordered_set<int> nums = generate_keys(10000, INT_MAX);
+        unordered_set<int> nums = generate_keys(1000, INT_MAX);
         AVL bt;
         for (int n : nums)
             bt.insertNode(n);
@@ -233,12 +233,12 @@ struct Solution {
 
         random_device rd;
         mt19937 g(rd());
-        shuffle(del.begin(), del.end(), g);
+        //shuffle(del.begin(), del.end(), g);
         for (int i = 0; i < del.size() - 1; ++i)
             bt.deleteNode(del[i]);
 
         
-        cout << "Количество поворотов при вставке: " << ins_rotates << " удалении: " << ins_rotates << "\n";
+        cout << "Количество поворотов при вставке: " << ins_rotates << " удалении: " << del_rotates << "\n";
     }
 };
 
