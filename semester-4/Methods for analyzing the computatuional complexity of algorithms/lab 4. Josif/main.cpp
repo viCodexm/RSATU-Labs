@@ -40,7 +40,7 @@ struct LinkedList {
             if (count == k) {
                 //cout << "\e[1mУбили номер: " << cur->number << "\e[0m\n";
                 killcurrent(cur);
-                count = 0;
+                count = 0; // 1?
             }
             cur = cur->next;
             count++;
@@ -85,16 +85,22 @@ int rec(int n, int k) {
 }
 
 int main() {
-    int n, k; cout << "N: "; cin >> n; cout << "K: "; cin >> k;
-    LinkedList ln;
-    ln.create(n);
-    cout << "Моделирование кольцевой структурой: ";
-    cout << ln.killThem(k) << "\n";
+    //int n, k; cout << "N: "; cin >> n; cout << "K: "; cin >> k;
+    //LinkedList ln;
+    //ln.create(n);
+    //cout << "Моделирование кольцевой структурой: ";
+    //cout << ln.killThem(k) << "\n";
 
-    cout << "Рекурсия: ";
-    cout << rec(n, k) << "\n";
+    cout << "Рекурсия: \n";
     
-    cout << "Итерация: ";
-    cout << iterative(n, k) << "\n";
+        for (int i = 1; i <= 500000; ++i)
+            if (rec(i, 375) == 17)
+                cout << i << endl;
+    
+    
+    //cout << rec(n, k) << "\n";
+    
+    //cout << "Итерация: ";
+    //cout << iterative(n, k) << "\n";
     return 0;
 }
