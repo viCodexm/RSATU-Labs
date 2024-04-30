@@ -82,21 +82,6 @@ struct BinaryTree {
         return max(leftHeight, rightHeight);
     }
 
-
-    // блин, тут же надо bfs ...
-    int dfs(int k, int n) {
-        return dfs(0, 0, 0, 0, k, n);
-    }
-    int leafs = 0;
-    int dfs(bool isLeft, int leftCount, int rightCount, int k, int n) {
-        if (leftCount == k || rightCount == n)
-            return height;
-        int height = leftCount + rightCount;
-        int lheight = dfs(1, leftCount + 1, rightCount);
-        int rheight = dfs(0, leftCount, rightCount + 1);
-        return max(lheight, rheight);
-    }
-
     void interactive() {
         interactive(root);
     }
@@ -114,7 +99,7 @@ struct BinaryTree {
 };
 
 int main() {
-    
+
     BinaryTree tree;
     int k = -1; int n = -1;
     while (true) {
