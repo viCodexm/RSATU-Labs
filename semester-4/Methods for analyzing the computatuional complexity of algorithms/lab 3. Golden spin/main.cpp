@@ -10,12 +10,12 @@ int func_calls = 0;
 const float eps = 0.0015;
 const float gold = 0.381966; //2 - ((1 + 5**0.5) / 2);
 
-int func1(int x) {
+float func1(float x) {
     func_calls++;
     return x * x - x * x * x * x + 7 * x;
 }
 
-int func2(int x) {
+float func2(float x) {
     func_calls++;
     return exp(x) - x - 2;
 }
@@ -42,6 +42,25 @@ void find(float left, float right, float x1, float x2, float precalc_x1, float p
     }
 }
 
+void find(float left, float right, float x1, float x2) {
+    float mid = (right - left) / 2;
+    if (mid <= eps) {
+        printf("x = %f\ny = %f\nКолличество вызовов: %d\n", x1, func1(x1), func_calls);
+        return;
+    }
+    float nextX1 = func1(x1), nextX2 = func2(x2);
+    if (nextX1 <= nextX2) {
+        left = x1;
+        x1 = x2;
+        x2 = right - (right - left) * gold;
+    } else {
+        right = x2;
+        x2 = x1;
+        x1 = left + (right - left) * gold;
+    }
+    find(left, left, x1, x2);
+}
+
 int main() {
     cout << "Введите левую и правую границы: ";
     float left, right; cin >> left >> right;
@@ -53,5 +72,7 @@ int main() {
     float precalc_x2 = func1(x2);
 
     find(left, right, x1, x2, precalc_x1, precalc_x2);
+
+    //find(left, right, x1, x2);
     return 0;
 }
