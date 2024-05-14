@@ -10,69 +10,77 @@ int func_calls = 0;
 const float eps = 0.0015;
 const float gold = 0.381966; //2 - ((1 + 5**0.5) / 2);
 
-float func1(float x) {
+float func(float x) {
     func_calls++;
-    return x * x - x * x * x * x + 7 * x;
+    return sin(x) + x / 2;
+    // return x * x - x * x * x * x + 7 * x;
+    // return exp(x) - x - 2;
 }
 
-float func2(float x) {
-    func_calls++;
-    return exp(x) - x - 2;
-}
-
-void find(float left, float right, float x1, float x2, float precalc_x1, float precalc_x2) {
+void find(float left, float right, float a, float b, float precalc_a, float precalc_b) {
     float mid = (right - left) / 2;
     if (mid <= eps) {
-        printf("x = %f\ny = %f\nКолличество вызовов: %d\n", x1, func1(x1), func_calls);
+        printf("x = %f\ny = %f\nКолличество вызовов: %d\n", a, func(a), func_calls);
         return;
     }
-    if (precalc_x1 <= precalc_x2) {
-        left = x1;
-        x1 = x2; precalc_x1 = precalc_x2;
-        x2 = right - (right - left) * gold;
-        precalc_x2 = func1(x2);
-        find(left, right, x1, x2, precalc_x1, precalc_x2);
+    if (precalc_a <= precalc_b) {
+        left = a;
+        a = b;
+        b = right - (right - left) * gold;
+        precalc_a = precalc_b; precalc_b = func(b);
     }
     else {
-        right = x2;
-        x2 = x1; precalc_x2 = precalc_x1;
-        x1 = left + (right - left) * gold;
-        precalc_x1 = func1(x1);
-        find(left, right, x1, x2, precalc_x1, precalc_x2);
+        right = b;
+        b = a;
+        a = left + (right - left) * gold;
+        precalc_b = precalc_a; precalc_a = func(a);
     }
+    find(left, right, a, b, precalc_a, precalc_b);
 }
 
-void find(float left, float right, float x1, float x2) {
+void find(float left, float right, float a, float b) {
     float mid = (right - left) / 2;
-    if (mid <= eps) {
-        printf("x = %f\ny = %f\nКолличество вызовов: %d\n", x1, func1(x1), func_calls);
-        return;
+
+    while (mid > eps) {
+        mid = (right - left) / 2;
+        float nextX1 = func(a), nextX2 = func(b);
+
+        if (nextX1 <= nextX2) {
+            left = a; a = b;
+            b = right - (right - left) * gold;
+        } else {
+            right = b; b = a;
+            a = left + (right - left) * gold;
+        } 
     }
-    float nextX1 = func1(x1), nextX2 = func2(x2);
-    if (nextX1 <= nextX2) {
-        left = x1;
-        x1 = x2;
-        x2 = right - (right - left) * gold;
-    } else {
-        right = x2;
-        x2 = x1;
-        x1 = left + (right - left) * gold;
-    }
-    find(left, left, x1, x2);
+    printf("x = %f\ny = %f\nКолличество вызовов: %d\n", a, func(a), func_calls);
 }
 
 int main() {
     cout << "Введите левую и правую границы: ";
     float left, right; cin >> left >> right;
 
+    float diff = right - left;
+    float a = left + diff * gold;
+    
+    float frow = right - a;
+    float take = diff - frow;
+    int count = 1;
+    while (frow > eps) {
+        frow = take * gold;
+        take -= frow;
+        count++;
+    }
+    cout << count << "\n";
+
     float x1 = left + (right - left) * gold;
     float x2 = right - (right - left) * gold;
 
-    float precalc_x1 = func1(x1);
-    float precalc_x2 = func1(x2);
+    float precalc_x1 = func(x1);
+    float precalc_x2 = func(x2);
 
     find(left, right, x1, x2, precalc_x1, precalc_x2);
-
-    //find(left, right, x1, x2);
+     
+    // find(left, right, x1, x2);
     return 0;
 }

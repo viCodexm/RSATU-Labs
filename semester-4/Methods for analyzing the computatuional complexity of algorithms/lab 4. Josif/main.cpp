@@ -85,17 +85,17 @@ int rec(int n, int k) {
 }
 
 int main() {
-    //int n, k; cout << "N: "; cin >> n; cout << "K: "; cin >> k;
-    //LinkedList ln;
-    //ln.create(n);
-    //cout << "Моделирование кольцевой структурой: ";
-    //cout << ln.killThem(k) << "\n";
+    int n, k; cout << "N: "; cin >> n; cout << "K: "; cin >> k;
+    LinkedList ln;
+    ln.create(n);
+    cout << "Моделирование кольцевой структурой: ";
+    cout << ln.killThem(k) << "\n";
 
-    cout << "Рекурсия: \n";
+    // cout << "Рекурсия: \n";
     
-        for (int i = 1; i <= 500000; ++i)
-            if (rec(i, 375) == 17)
-                cout << i << endl;
+    //     for (int i = 1; i <= 500000; ++i)
+    //         if (rec(i, 375) == 17)
+    //             cout << i << endl;
     
     
     //cout << rec(n, k) << "\n";
