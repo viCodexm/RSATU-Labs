@@ -108,10 +108,11 @@ public:
 };
 
 int main() {
-    freopen("input.txt", "r", stdin);
+    ///freopen("input.txt", "r", stdin);
     //freopen("output.txt", "w", stdout);
-    float x; cout << "Введите x: "; cin >> x; cout << x << "\n";
+    //float x; cout << "Введите x: "; cin >> x; cout << x << "\n";
     Solution a;
+	float x = 15.1;
     a.solve_problem1(x);
     a.solve_problem2(x);
     a.solve_problem3(x);

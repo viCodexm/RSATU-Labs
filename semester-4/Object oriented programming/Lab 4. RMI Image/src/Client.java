@@ -12,13 +12,13 @@ public class Client {
         input = new Scanner(System.in);
 
         System.out.println("Connected to server...");
-        String image_path = "/home/dmitry/Data/src/Git/RSATU-Labs/semester-4/Object oriented programming/Lab 4. RMI Image/src/rgb";
+        String image_path = "/home/dmitry/Data/src/Git/RSATU-Labs/semester-4/Object oriented programming/Lab 4. RMI Image/src/green-red";
 
 
         try {
             System.out.println("Encode: ");
             CRLEEncoder encoder = new CRLEEncoder(image_path + ".bmp", image_path + ".compressed-bmp");
-            encoder.encodeFile();
+            encoder.encodeFileRGB();
 
             File file = new File(image_path + ".compressed-bmp");
             byte[] fileData = Files.readAllBytes(file.toPath());

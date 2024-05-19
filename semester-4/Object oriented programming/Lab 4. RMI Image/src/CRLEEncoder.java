@@ -54,55 +54,64 @@ public class CRLEEncoder implements RLEInterface{
         System.out.println("Compressed File Size : " + outputFileLen + "\n");
         System.out.println("Compressed Ratio : " + compress_ratio + "% \n");
 	}
-//
-//    public void encodeFileRGB() throws Exception {
-//        if (inputFilename.isEmpty())
-//            throw new Exception("\nFile is Empty!");
-//
-//        BufferedInputStream in = new BufferedInputStream(new FileInputStream(inputFilename));
-//        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFilename));;
-//
-//        long fileLen = in.available();
-//        if (fileLen == 0) throw new Exception("\nFile is Empty!");
-//
-//        System.out.println("Original Size : " + fileLen + "\n");
-//        // skip useless
-//        for (int i = 0; i < 54; ++i)
-//            in.read();
-//
-//        int count = 1, r = 0, g = 0, b = 0, prevCh = 0;
-//        out.write(rleSignature.getBytes());
-//        System.out.println(fileLen + " " + (fileLen - 54) % 3);
-//        int prev_r = in.read(), prev_g = in.read(), prev_b = in.read();
-//        for (long i = 1; i < fileLen;) {
-//            boolean isEqual = false;
-//            do {
-//                r = in.read(); g = in.read(); b = in.read();
-//                i++;
-//                isEqual = prev_r == r && prev_g == g && prev_b == b;
-//                if (isEqual) count++;
-//                if (count >= 255) break;
-//            } while (isEqual && i < fileLen);
-//
-//            if (count >= toleranceFrequency || r == ESCAPECHAR || g == ESCAPECHAR || b == ESCAPECHAR){
-//                out.write(ESCAPECHAR);
-//                out.write((char)prevCh);
-//                out.write((char)count);
-//            } else {
-//                for (int k = 0; k < count; ++k)
-//                    out.write(prevCh);
-//            }
-//
-//            if (isEqual) count = 0; else count = 1;
-//            prev_r = r; prev_g = g; prev_b = b;
-//        }
-//        out.close();
-//
-//        long outputFileLen = new File(outputFilename).length();
-//        float compress_ratio = (float)(outputFileLen*100) / (float)fileLen;
-//        System.out.println("Compressed File Size : " + outputFileLen + "\n");
-//        System.out.println("Compressed Ratio : " + compress_ratio + "% \n");
-//    }
+
+    public void encodeFileRGB() throws Exception {
+        if (inputFilename.isEmpty())
+            throw new Exception("\nFile is Empty!");
+
+        BufferedInputStream in = new BufferedInputStream(new FileInputStream(inputFilename));
+        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outputFilename));;
+
+        long fileLen = in.available();
+        if (fileLen == 0) throw new Exception("\nFile is Empty!");
+
+        System.out.println("Original Size : " + fileLen + "\n");
+        // skip useless
+        for (int i = 0; i < 54; ++i)
+            in.read();
+
+        int count = 1, r = 0, g = 0, b = 0, ch = 0;
+        out.write(rleSignature.getBytes());
+        System.out.println(fileLen + " " + (fileLen - 54) % 3);
+        int prev_r = in.read(), prev_g = in.read(), prev_b = in.read();
+        for (long i = 54; i < fileLen;) {
+//            System.out.println(in.read());
+            boolean isEqual = false;
+            do {
+                ch = in.read();
+                if (ch == ESCAPECHAR) {
+                    ch = in.read();
+                    i++;
+                    if (ch == ESCAPECHAR)
+                        break;
+                }
+                r = ch; g = in.read(); b = in.read();
+                i += 3;
+                isEqual = prev_r == r && prev_g == g && prev_b == b;
+                if (isEqual) count++;
+                if (count >= 255) break;
+            } while (isEqual && i < fileLen);
+
+            if (count >= toleranceFrequency || ch == ESCAPECHAR){
+                out.write(ESCAPECHAR);
+                out.write((char)r); out.write((char)g); out.write((char)b);
+                out.write((char)count);
+            } else {
+                for (int k = 0; k < count; ++k) {
+                    out.write((char)r); out.write((char)g); out.write((char)b);
+                }
+            }
+
+            if (isEqual) count = 0; else count = 1;
+            prev_r = r; prev_g = g; prev_b = b;
+        }
+        out.close();
+
+        long outputFileLen = new File(outputFilename).length();
+        float compress_ratio = (float)(outputFileLen*100) / (float)fileLen;
+        System.out.println("Compressed File Size : " + outputFileLen + "\n");
+        System.out.println("Compressed Ratio : " + compress_ratio + "% \n");
+    }
 }
 
 

@@ -34,7 +34,7 @@ public class Server extends UnicastRemoteObject implements RMI {
             FileInputStream file = createFileInputStreamFromByteArray(fileData);
 
             CRLEDecoder decoder = new CRLEDecoder(file, save_path + "decoded-image.bmp");
-            decoder.decodeFile();
+            decoder.decodeFileRGB();
         }
         catch (Exception e) {
             System.out.println("An error occurred.");
