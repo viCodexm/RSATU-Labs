@@ -17,9 +17,15 @@ gui::gui(QWidget *parent)
     image_capcha = new ImageCapcha(this);
     image_capcha->generate();
     image_capcha->show();
-    // ui->label->hide();
-    // ui->lineEdit->hide();
     ui->verticalLayout->addWidget(image_capcha);
+}
+
+QString getProjectPath() {
+    QString fullPath = QDir::currentPath();
+    QDir dir(fullPath);
+    while (!dir.isRoot() && !dir.path().endsWith("capcha"))
+        dir.cdUp();
+    return dir.path();
 }
 
 QString getRandomImagePath(QString path) {
@@ -37,8 +43,7 @@ QString getRandomImagePath(QString path) {
 
 void gui::updateCapchaDisplay(QString capchaText) {
     ui->label->setText(capchaText);
-
-    QString path = getRandomImagePath("/home/dmitry/Data/src/Git/RSATU-Labs/semester-4/Object oriented programming/capcha/imgs/");
+    QString path = getRandomImagePath(getProjectPath() + "/imgs/");
     ui->label->setStyleSheet("background-image: url(" + path + "); color: rgba(255, 0, 0, 1);");
 }
 

@@ -68,9 +68,17 @@ class ImageCapcha : public Capcha {
     ~ImageCapcha() {
         delete gridLayout;
     }
+
+    QString getProjectPath() {
+        QString fullPath = QDir::currentPath();
+        QDir dir(fullPath);
+        while (!dir.isRoot() && !dir.path().endsWith("capcha"))
+            dir.cdUp();
+        return dir.path();
+    }
 public:
     explicit ImageCapcha(QWidget *parent = nullptr) : Capcha(parent), gridLayout(new QGridLayout(this)) {
-        getImagesPool("/home/dmitry/Data/src/Git/RSATU-Labs/semester-4/Object oriented programming/capcha/imgs");
+        getImagesPool(getProjectPath() + "/imgs/");
         gridLayout->setSpacing(15);
 
         // connect(gridLayout, &QGridLayout::itemAtPosition, this, &ImageCapcha::onItemMoved);
