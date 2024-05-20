@@ -1,7 +1,9 @@
 #ifndef IMAGECAPCHA_H
 #define IMAGECAPCHA_H
 
+
 #include "Capcha.h"
+#include "ProjectSpecific.h"
 #include <QDirIterator>
 #include <QIcon>
 #include <QPushButton>
@@ -68,17 +70,9 @@ class ImageCapcha : public Capcha {
     ~ImageCapcha() {
         delete gridLayout;
     }
-
-    QString getProjectPath() {
-        QString fullPath = QDir::currentPath();
-        QDir dir(fullPath);
-        while (!dir.isRoot() && !dir.path().endsWith("capcha"))
-            dir.cdUp();
-        return dir.path();
-    }
 public:
     explicit ImageCapcha(QWidget *parent = nullptr) : Capcha(parent), gridLayout(new QGridLayout(this)) {
-        getImagesPool(getProjectPath() + "/imgs/");
+        getImagesPool(project::getProjectPath() + "/imgs/");
         gridLayout->setSpacing(15);
 
         // connect(gridLayout, &QGridLayout::itemAtPosition, this, &ImageCapcha::onItemMoved);

@@ -1,6 +1,7 @@
 #include "gui.h"
 #include "ui_gui.h"
 #include <QMessageBox>
+#include <exception>
 
 gui::gui(QWidget *parent)
     : QMainWindow(parent)
@@ -20,14 +21,6 @@ gui::gui(QWidget *parent)
     ui->verticalLayout->addWidget(image_capcha);
 }
 
-QString getProjectPath() {
-    QString fullPath = QDir::currentPath();
-    QDir dir(fullPath);
-    while (!dir.isRoot() && !dir.path().endsWith("capcha"))
-        dir.cdUp();
-    return dir.path();
-}
-
 QString getRandomImagePath(QString path) {
     QVector<QString> imagesPool;
     QDirIterator iterator(path, QStringList() << "*.png" << "*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
@@ -43,7 +36,7 @@ QString getRandomImagePath(QString path) {
 
 void gui::updateCapchaDisplay(QString capchaText) {
     ui->label->setText(capchaText);
-    QString path = getRandomImagePath(getProjectPath() + "/imgs/");
+    QString path = getRandomImagePath(project::getProjectPath() + "/imgs/");
     ui->label->setStyleSheet("background-image: url(" + path + "); color: rgba(255, 0, 0, 1);");
 }
 
@@ -56,8 +49,9 @@ gui::~gui()
 
 void gui::on_pushButton_2_clicked()
 {
-    capchaWidget->generate();
-    image_capcha->generate();
+    if (ui->tabWidget->currentWidget() == ui->tab)
+        capchaWidget->generate();
+    else image_capcha->generate();
     ui->lineEdit->clear();
 }
 
@@ -65,13 +59,17 @@ void gui::on_pushButton_2_clicked()
 void gui::on_lineEdit_returnPressed()
 {
     capchaWidget->callPopup(ui->lineEdit->text());
-    capchaWidget->generate();
+    try {
+        capchaWidget->generate();
+    } catch (const std::string error_msg) {
+        error_handler.callPopup(error_msg);
+    }
     ui->lineEdit->clear();
 }
 
 
 void gui::on_pushButton_clicked()
-{
+{    
     if (ui->tabWidget->currentWidget() == ui->tab) {
         capchaWidget->callPopup(ui->lineEdit->text());
         capchaWidget->generate();

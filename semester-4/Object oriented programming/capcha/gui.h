@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include "TextCapcha.h"
 #include "ImageCapcha.h"
+#include "ErrorHandler.h"
+#include "ProjectSpecific.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -30,5 +32,6 @@ private:
     Ui::gui *ui;
     TextCapcha *capchaWidget;
     ImageCapcha *image_capcha;
+    ErrorHandler error_handler;
 };
 #endif // GUI_H

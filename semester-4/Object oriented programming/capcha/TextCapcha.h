@@ -13,13 +13,14 @@ class TextCapcha : public Capcha {
         return input == capcha_text;
     }
 public:
-    explicit TextCapcha(QWidget *parent = nullptr) : Capcha(parent) {}
+    explicit TextCapcha(QWidget *parent = nullptr) : Capcha(parent) {
+        capcha_text.resize(length);
+    }
 
     void generate() override {
-        capcha_text.clear();
-        capcha_text.reserve(length);
-        for (int i = 0; i < length; ++i)
-            capcha_text.append(allowed_symbols.at(QRandomGenerator::global()->bounded(allowed_symbols.size())));
+        for (QChar& capcha_symbol : capcha_text)
+            capcha_symbol = (allowed_symbols.at(QRandomGenerator::global()->bounded(allowed_symbols.size())));
+
         emit capchaGenerated(capcha_text);
     }
 };
