@@ -5,7 +5,6 @@
 #include "TextCapcha.h"
 #include "ImageCapcha.h"
 #include "ErrorHandler.h"
-#include "ProjectSpecific.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,6 +26,12 @@ private slots:
     void on_lineEdit_returnPressed();
 
     void on_pushButton_clicked();
+
+    void on_action_2_triggered();
+
+    void on_action_3_triggered();
+
+    void on_action_4_triggered();
 
 private:
     Ui::gui *ui;

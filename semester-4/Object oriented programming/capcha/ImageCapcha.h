@@ -74,11 +74,6 @@ public:
     explicit ImageCapcha(QWidget *parent = nullptr) : Capcha(parent), gridLayout(new QGridLayout(this)) {
         getImagesPool(project::getProjectPath() + "/imgs/");
         gridLayout->setSpacing(15);
-
-        // connect(gridLayout, &QGridLayout::itemAtPosition, this, &ImageCapcha::onItemMoved);
-        // for (int i = 0; i < 10; ++i) {
-        //     QObject::connect(gridLayout->itemAtPosition(row, column + i), &QPushButton::clicked, this, [this, i]() { onButtonClick(i); });
-        // }
     }
 
     void generate() override {
@@ -89,7 +84,6 @@ public slots:
     void updatePressState(QPushButton* button, int row, int column) {
         int current_bit = 1 << (row * max_column + column);
         current_presses ^= current_bit;
-        // button->hide();
         setButtonStyle(button, current_presses & current_bit);
     }
 };

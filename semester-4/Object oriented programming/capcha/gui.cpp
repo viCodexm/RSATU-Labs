@@ -1,7 +1,6 @@
 #include "gui.h"
 #include "ui_gui.h"
 #include <QMessageBox>
-#include <exception>
 
 gui::gui(QWidget *parent)
     : QMainWindow(parent)
@@ -79,5 +78,33 @@ void gui::on_pushButton_clicked()
         image_capcha->generate();
     }
     ui->lineEdit->clear();
+}
+
+
+// о программе
+void gui::on_action_2_triggered()
+{
+    QMessageBox popup(QMessageBox::Information, "О программе",
+                        "Автор: Скворцов Дмитрий\n"
+                        "Графический интерфейс: qt\n"
+                        "Язык: C++");
+    popup.exec();
+}
+
+// exit
+void gui::on_action_3_triggered()
+{
+    QCoreApplication::quit();
+}
+
+
+void gui::on_action_4_triggered()
+{
+    QMessageBox popup(QMessageBox::Information, "Помощь",
+                      "Программа предназначена для прохождения капчи\n\n"
+                      "Предусмотрено два варианта:\n"
+                      "- текстовая и капча с картинками\n\n"
+                      "При возникновении ошибок или пожеланий пишите на почту разработчика: uin@yandex.ru");
+    popup.exec();
 }
 
