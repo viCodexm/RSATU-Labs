@@ -40,19 +40,15 @@ void HanoiIter(int n, char source, char destination, char auxiliary, vector<char
     fill(outMas.begin(), outMas.end(), 'A');
     print(outMas);
 
-    int curStep = 1;
-    bool rotate;
-
-    while (curStep != pow(2, n)) {
+    for (int curStep = 1; curStep != pow(2, n); ++curStep) {
     
         int res = (Ostat(curStep) & 1);
-        rotate = n & 1 ? !(res) : (res);
+        bool rotate = n & 1 ? !(res) : (res);
 
         if (curStep & 1) outMas[0] = Symbol(outMas[0], n & 1);
         else outMas[Ostat(curStep)] = Symbol(outMas[Ostat(curStep)], rotate);
 
         print(outMas);
-        curStep++;
     }
 }
 
