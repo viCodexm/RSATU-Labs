@@ -35,7 +35,7 @@ private slots:
 
 private:
     Ui::gui *ui;
-    TextCapcha *capchaWidget;
+    TextCapcha *text_capcha;
     ImageCapcha *image_capcha;
     ErrorHandler error_handler;
 };

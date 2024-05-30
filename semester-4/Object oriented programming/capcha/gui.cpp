@@ -8,11 +8,11 @@ gui::gui(QWidget *parent)
 {
     ui->setupUi(this);
 
-    capchaWidget = new TextCapcha(this);
-    connect(capchaWidget, &TextCapcha::capchaGenerated, this, &gui::updateCapchaDisplay);
+    text_capcha = new TextCapcha(this);
+    connect(text_capcha, &TextCapcha::capchaGenerated, this, &gui::updateCapchaDisplay);
 
-    capchaWidget->generate();
-    ui->verticalLayout->addWidget(capchaWidget);
+    text_capcha->generate();
+    ui->verticalLayout->addWidget(text_capcha);
 
     image_capcha = new ImageCapcha(this);
     image_capcha->generate();
@@ -23,14 +23,10 @@ gui::gui(QWidget *parent)
 QString getRandomImagePath(QString path) {
     QVector<QString> imagesPool;
     QDirIterator iterator(path, QStringList() << "*.png" << "*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-    while (iterator.hasNext()) {
+    while (iterator.hasNext())
         imagesPool.append(iterator.next());
-    }
-    std::random_device rd;
-    std::mt19937 g(rd());
-    std::shuffle(imagesPool.begin(), imagesPool.end(), g);
 
-    return *imagesPool.begin();
+    return *(imagesPool.begin() + QRandomGenerator::global()->bounded(imagesPool.size()));
 }
 
 void gui::updateCapchaDisplay(QString capchaText) {
@@ -43,13 +39,13 @@ void gui::updateCapchaDisplay(QString capchaText) {
 gui::~gui()
 {
     delete ui;
-    delete capchaWidget;
+    delete text_capcha;
 }
 
 void gui::on_pushButton_2_clicked()
 {
     if (ui->tabWidget->currentWidget() == ui->tab)
-        capchaWidget->generate();
+        text_capcha->generate();
     else image_capcha->generate();
     ui->lineEdit->clear();
 }
@@ -57,9 +53,10 @@ void gui::on_pushButton_2_clicked()
 
 void gui::on_lineEdit_returnPressed()
 {
-    capchaWidget->callPopup(ui->lineEdit->text());
+    text_capcha->setUserInput(ui->lineEdit->text());
+    text_capcha->callPopup();
     try {
-        capchaWidget->generate();
+        text_capcha->generate();
     } catch (const std::string error_msg) {
         error_handler.callPopup(error_msg);
     }
@@ -70,18 +67,18 @@ void gui::on_lineEdit_returnPressed()
 void gui::on_pushButton_clicked()
 {    
     if (ui->tabWidget->currentWidget() == ui->tab) {
-        capchaWidget->callPopup(ui->lineEdit->text());
-        capchaWidget->generate();
+        text_capcha->callPopup();
+        text_capcha->generate();
     }
     else {
-        image_capcha->callPopup("");
+        image_capcha->callPopup();
         image_capcha->generate();
     }
     ui->lineEdit->clear();
 }
 
 
-// о программе
+// about program
 void gui::on_action_2_triggered()
 {
     QMessageBox popup(QMessageBox::Information, "О программе",

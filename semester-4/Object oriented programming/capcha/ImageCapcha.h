@@ -9,6 +9,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QRandomGenerator>
+#include <QPainter>
 
 class ImageCapcha : public Capcha {
     Q_OBJECT
@@ -26,9 +27,8 @@ class ImageCapcha : public Capcha {
 
     void getImagesPool(const QString& directoryPath) {
         QDirIterator iterator(directoryPath, QStringList() << "*.png" << "*.jpg", QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
-        while (iterator.hasNext()) {
+        while (iterator.hasNext())
             imagesPool.append(iterator.next());
-        }
     }
 
     QVector<QString> getRandomImagesPaths() {
@@ -41,7 +41,10 @@ class ImageCapcha : public Capcha {
 
     QPushButton* formButton(QString& imagePath, int row, int column) {
         need_presses |= imagePath.contains("panda") * 1 << (row * max_column + column);
-        QIcon icon(imagePath);
+
+        QImage image(imagePath);
+        QIcon icon(QPixmap::fromImage(addWatermark(addBlur(addNoise(image)))));
+
         QPushButton* button = new QPushButton(icon, "", this);
         button->setFixedSize(QSize(90, 90));
         button->setIconSize(QSize(85, 85));
@@ -63,13 +66,15 @@ class ImageCapcha : public Capcha {
             column++;
         }
     }
-    bool isValid(const QString& input) const override {
+
+    bool isValid() const override {
         return need_presses == current_presses;
     }
 
     ~ImageCapcha() {
         delete gridLayout;
     }
+
 public:
     explicit ImageCapcha(QWidget *parent = nullptr) : Capcha(parent), gridLayout(new QGridLayout(this)) {
         getImagesPool(project::getProjectPath() + "/imgs/");

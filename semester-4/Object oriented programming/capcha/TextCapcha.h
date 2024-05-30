@@ -5,23 +5,26 @@
 #include <QRandomGenerator>
 
 class TextCapcha : public Capcha {
-    QString capcha_text;
-    QString allowed_symbols = "abcdefghijklmnopqrstuvwxyz0123456789";
-    int length = 6;
+    QString user_text, need_text;
+    const int length = 6;
 
-    bool isValid(const QString& input) const override {
-        return input == capcha_text;
+    bool isValid() const override {
+        return user_text == need_text;
     }
+
 public:
     explicit TextCapcha(QWidget *parent = nullptr) : Capcha(parent) {
-        capcha_text.resize(length);
+        need_text.resize(length);
     }
 
     void generate() override {
-        for (QChar& capcha_symbol : capcha_text)
-            capcha_symbol = (allowed_symbols.at(QRandomGenerator::global()->bounded(allowed_symbols.size())));
+        need_text = generateString(length);
 
-        emit capchaGenerated(capcha_text);
+        emit capchaGenerated(need_text);
+    }
+
+    void setUserInput(QString input) {
+        user_text = input;
     }
 };
 

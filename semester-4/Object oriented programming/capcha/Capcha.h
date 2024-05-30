@@ -6,11 +6,16 @@
 class Capcha : public QWidget
 {
     Q_OBJECT
-    virtual bool isValid(const QString& input) const = 0;
+    virtual bool isValid() const = 0;
 public:
     explicit Capcha(QWidget *parent = nullptr);
     virtual void generate() = 0;
-    void callPopup(const QString& input) const;
+
+    void callPopup() const;
+    QString generateString(int size);
+    QImage addNoise(QImage image);
+    QImage addBlur(QImage image);
+    QImage addWatermark(QImage image);
 
 signals:
     void capchaGenerated(QString capcha_text);
