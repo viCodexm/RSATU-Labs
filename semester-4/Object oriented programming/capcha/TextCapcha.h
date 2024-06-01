@@ -3,6 +3,8 @@
 
 #include "Capcha.h"
 #include <QRandomGenerator>
+#include <QTcpSocket>
+#include <QHostAddress>
 
 class TextCapcha : public Capcha {
     QString user_text, need_text;
@@ -19,6 +21,17 @@ public:
 
     void generate() override {
         need_text = generateString(length);
+        emit capchaGenerated(need_text);
+    }
+
+    void generateOnServer(QTcpSocket* socket) override {
+        socket->write("Хочу текстовую капчу");
+
+        socket->waitForReadyRead();
+        QByteArray response = socket->readAll();
+        QString receivedResponse = QString::fromLatin1(response.constData());
+        qDebug() << "Received response: " << receivedResponse;
+        need_text = response;
 
         emit capchaGenerated(need_text);
     }

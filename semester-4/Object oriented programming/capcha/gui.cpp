@@ -1,6 +1,8 @@
 #include "gui.h"
 #include "ui_gui.h"
 #include <QMessageBox>
+#include <QTcpSocket>
+#include <QHostAddress>
 
 gui::gui(QWidget *parent)
     : QMainWindow(parent)
@@ -8,14 +10,18 @@ gui::gui(QWidget *parent)
 {
     ui->setupUi(this);
 
+    socket = new QTcpSocket(this);
+    socket->connectToHost(QHostAddress::Any, 33333);
+
     text_capcha = new TextCapcha(this);
     connect(text_capcha, &TextCapcha::capchaGenerated, this, &gui::updateCapchaDisplay);
 
-    text_capcha->generate();
+    // text_capcha->generate();
+    text_capcha->generateOnServer(socket);
     ui->verticalLayout->addWidget(text_capcha);
 
     image_capcha = new ImageCapcha(this);
-    image_capcha->generate();
+    image_capcha->generateOnServer(socket);
     image_capcha->show();
     ui->verticalLayout->addWidget(image_capcha);
 }
@@ -45,8 +51,8 @@ gui::~gui()
 void gui::on_pushButton_2_clicked()
 {
     if (ui->tabWidget->currentWidget() == ui->tab)
-        text_capcha->generate();
-    else image_capcha->generate();
+        text_capcha->generateOnServer(socket);
+    else image_capcha->generateOnServer(socket);
     ui->lineEdit->clear();
 }
 
@@ -56,7 +62,7 @@ void gui::on_lineEdit_returnPressed()
     text_capcha->setUserInput(ui->lineEdit->text());
     text_capcha->callPopup();
     try {
-        text_capcha->generate();
+        text_capcha->generateOnServer(socket);
     } catch (const std::string error_msg) {
         error_handler.callPopup(error_msg);
     }
@@ -68,11 +74,11 @@ void gui::on_pushButton_clicked()
 {    
     if (ui->tabWidget->currentWidget() == ui->tab) {
         text_capcha->callPopup();
-        text_capcha->generate();
+        text_capcha->generateOnServer(socket);
     }
     else {
         image_capcha->callPopup();
-        image_capcha->generate();
+        image_capcha->generateOnServer(socket);
     }
     ui->lineEdit->clear();
 }

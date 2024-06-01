@@ -2,6 +2,7 @@
 #define CAPCHA_H
 
 #include <QWidget>
+#include <QTcpSocket>
 
 class Capcha : public QWidget
 {
@@ -10,6 +11,7 @@ class Capcha : public QWidget
 public:
     explicit Capcha(QWidget *parent = nullptr);
     virtual void generate() = 0;
+    virtual void generateOnServer(QTcpSocket* socket) = 0;
 
     void callPopup() const;
     QString generateString(int size);

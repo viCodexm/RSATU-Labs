@@ -13,8 +13,9 @@
 
 class ImageCapcha : public Capcha {
     Q_OBJECT
-
+public:
     QGridLayout* gridLayout;
+private:
     QVector<QString> imagesPool;
     const int max_images = 12, max_column = 4;
     int need_presses = 0;
@@ -85,6 +86,32 @@ public:
         need_presses = current_presses = 0;
         populateGridWithImages();
     }
+
+    void generateOnServer(QTcpSocket* socket) override {
+        socket->write("Хочу капчу с картинками");
+
+        socket->waitForReadyRead();
+        QByteArray response = socket->readAll();
+        QString receivedResponse = QString::fromLatin1(response.constData());
+        qDebug() << "Received response: " << receivedResponse;
+
+        need_presses = current_presses = 0;
+
+        // QJsonArray jsonArray;
+        // QDataStream stream(&receivedResponse, QIODevice::ReadOnly);
+        // stream >> jsonArray;
+
+        // QGridLayout* newGridLayout = new QGridLayout();
+        // for (int i = 0; i < jsonArray.size(); ++i) {
+        //     QJsonObject jsonObject = jsonArray.at(i).toObject();
+        //     QPushButton* button = new QPushButton(jsonObject["text"].toString());
+        //     int row = jsonObject["row"].toInt();
+        //     int column = jsonObject["column"].toInt();
+        //     gridLayout->addWidget(button, row, column);
+        // }
+
+    }
+
 public slots:
     void updatePressState(QPushButton* button, int row, int column) {
         int current_bit = 1 << (row * max_column + column);

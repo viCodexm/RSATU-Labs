@@ -2,6 +2,7 @@
 #define GUI_H
 
 #include <QMainWindow>
+#include <QTcpSocket>
 #include "TextCapcha.h"
 #include "ImageCapcha.h"
 #include "ErrorHandler.h"
@@ -38,5 +39,6 @@ private:
     TextCapcha *text_capcha;
     ImageCapcha *image_capcha;
     ErrorHandler error_handler;
+    QTcpSocket* socket;
 };
 #endif // GUI_H

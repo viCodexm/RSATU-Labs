@@ -10,25 +10,17 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    ErrorHandler.cpp \
-    ProjectSpecific.cpp \
-    capcha.cpp \
     main.cpp \
-    gui.cpp
+    server.cpp
 
 HEADERS += \
-    Capcha.h \
-    ErrorHandler.h \
-    ImageCapcha.h \
-    ProjectSpecific.h \
-    TextCapcha.h \
-    gui.h
+    server.h
 
 FORMS += \
-    gui.ui
+    server.ui
 
 TRANSLATIONS += \
-    capcha_ru_RU.ts
+    capcha_server_ru_RU.ts
 CONFIG += lrelease
 CONFIG += embed_translations
 
