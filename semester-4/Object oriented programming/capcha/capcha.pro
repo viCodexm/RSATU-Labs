@@ -1,5 +1,4 @@
-QT       += core gui
-QT       += network
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -11,7 +10,9 @@ CONFIG += c++17
 
 SOURCES += \
     ErrorHandler.cpp \
+    ImageCapcha.cpp \
     ProjectSpecific.cpp \
+    TextCapcha.cpp \
     capcha.cpp \
     main.cpp \
     gui.cpp

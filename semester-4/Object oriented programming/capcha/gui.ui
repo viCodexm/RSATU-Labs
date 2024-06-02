@@ -30,7 +30,7 @@
      <string>Отправить</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="QPushButton" name="getFortuneButton">
     <property name="geometry">
      <rect>
       <x>210</x>
@@ -53,7 +53,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -79,6 +79,9 @@
       </property>
      </widget>
      <widget class="QLabel" name="label">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
       <property name="geometry">
        <rect>
         <x>170</x>
@@ -109,7 +112,7 @@ border-radius: 4px;</string>
        <enum>QFrame::Shape::StyledPanel</enum>
       </property>
       <property name="text">
-       <string>JF45a3c</string>
+       <string/>
       </property>
       <property name="scaledContents">
        <bool>true</bool>

@@ -10,35 +10,16 @@ class TextCapcha : public Capcha {
     QString user_text, need_text;
     const int length = 6;
 
-    bool isValid() const override {
-        return user_text == need_text;
-    }
+    bool isValid() const override;
 
 public:
-    explicit TextCapcha(QWidget *parent = nullptr) : Capcha(parent) {
-        need_text.resize(length);
-    }
+    explicit TextCapcha(QWidget *parent = nullptr);
 
-    void generate() override {
-        need_text = generateString(length);
-        emit capchaGenerated(need_text);
-    }
+    void generate() override;
 
-    void generateOnServer(QTcpSocket* socket) override {
-        socket->write("Хочу текстовую капчу");
+    void generateOnServer(QTcpSocket* socket, QDataStream& in) override;
 
-        socket->waitForReadyRead();
-        QByteArray response = socket->readAll();
-        QString receivedResponse = QString::fromLatin1(response.constData());
-        qDebug() << "Received response: " << receivedResponse;
-        need_text = response;
-
-        emit capchaGenerated(need_text);
-    }
-
-    void setUserInput(QString input) {
-        user_text = input;
-    }
+    void setUserInput(QString input);
 };
 
 #endif // TEXTCAPCHA_H

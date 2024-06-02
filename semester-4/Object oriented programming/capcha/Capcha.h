@@ -11,13 +11,13 @@ class Capcha : public QWidget
 public:
     explicit Capcha(QWidget *parent = nullptr);
     virtual void generate() = 0;
-    virtual void generateOnServer(QTcpSocket* socket) = 0;
+    virtual void generateOnServer(QTcpSocket* socket, QDataStream& in) = 0;
 
     void callPopup() const;
-    QString generateString(int size);
-    QImage addNoise(QImage image);
-    QImage addBlur(QImage image);
-    QImage addWatermark(QImage image);
+    QString generateString(int size) const;
+    QImage addNoise(QImage image) const;
+    QImage addBlur(QImage image) const;
+    QImage addWatermark(QImage image) const;
 
 signals:
     void capchaGenerated(QString capcha_text);

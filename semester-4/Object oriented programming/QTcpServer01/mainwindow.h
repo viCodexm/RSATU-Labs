@@ -35,8 +35,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QTcpServer *tcpServer;
-    int server_status;
-    QMap<int,QTcpSocket *> SClients;
+    QMap<int, QTcpSocket *> SClients;
     ImageCapcha* image_capcha;
 };
 

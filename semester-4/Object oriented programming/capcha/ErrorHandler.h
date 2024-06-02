@@ -7,8 +7,8 @@ class ErrorHandler
 public:
     ErrorHandler();
 
-    void callPopup(const std::string& error_message);
-    void logError(const std::string& error_message);
+    void callErrorPopup(const std::string& error_message) const;
+    void logError(const std::string& error_message) const;
 };
 
 #endif // ERRORHANDLER_H

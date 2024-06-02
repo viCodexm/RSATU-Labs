@@ -19,7 +19,7 @@ void Capcha::callPopup() const {
 }
 
 
-QString Capcha::generateString(int size) {
+QString Capcha::generateString(int size) const {
     QString allowed_symbols = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_!@~$^&*";
     QString string(size, '.');
     for (QChar& capcha_symbol : string)
@@ -29,7 +29,7 @@ QString Capcha::generateString(int size) {
 }
 
 
-QImage Capcha::addNoise(QImage image) {
+QImage Capcha::addNoise(QImage image) const {
     const int size = image.width() * image.height();
     int min_noise_amount = size / 10;
     int max_noise_amount = size / 3;
@@ -43,7 +43,7 @@ QImage Capcha::addNoise(QImage image) {
 }
 
 
-QImage Capcha::addBlur(QImage image) {
+QImage Capcha::addBlur(QImage image) const {
     QT_BEGIN_NAMESPACE
     extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
     QT_END_NAMESPACE
@@ -58,7 +58,7 @@ QImage Capcha::addBlur(QImage image) {
     return dest.toImage();
 }
 
-QImage Capcha::addWatermark(QImage image) {
+QImage Capcha::addWatermark(QImage image) const {
     QPainter painter(&image);
     const int color_min     = 100,  color_max     = 255;
     const int font_min_size = 16,   font_max_size = 24;

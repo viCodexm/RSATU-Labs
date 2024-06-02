@@ -7,27 +7,28 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    tcpServer(new QTcpServer(this)),
+    image_capcha(new ImageCapcha())
 {
     ui->setupUi(this);
-    image_capcha = new ImageCapcha(this);
+    on_starting_clicked();
+    image_capcha->generate();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    server_status=0;
+    delete tcpServer;
 }
 
 void MainWindow::on_starting_clicked()
 {
-    tcpServer = new QTcpServer(this);
     connect(tcpServer, SIGNAL(newConnection()), this, SLOT(newuser()));
-    if (!tcpServer->listen(QHostAddress::Any, 33333) && server_status==0) {
+    if (!tcpServer->listen(QHostAddress::Any, 33333)) {
         qDebug() <<  QObject::tr("Unable to start the server: %1.").arg(tcpServer->errorString());
         ui->textinfo->append(tcpServer->errorString());
     } else {
-        server_status=1;
         qDebug() << tcpServer->isListening() << "TCPSocket listen on port";
         ui->textinfo->append(QString::fromUtf8("Сервер запущен!"));
         qDebug() << QString::fromUtf8("Сервер запущен!");
@@ -36,9 +37,6 @@ void MainWindow::on_starting_clicked()
 
 void MainWindow::on_stoping_clicked()
 {
-    if (server_status != 1)
-        return;
-
     foreach(int i,SClients.keys()){
         QTextStream os(SClients[i]);
         os.setAutoDetectUnicode(true);
@@ -49,15 +47,11 @@ void MainWindow::on_stoping_clicked()
     tcpServer->close();
     ui->textinfo->append(QString::fromUtf8("Сервер остановлен!"));
     qDebug() << QString::fromUtf8("Сервер остановлен!");
-    server_status=0;
 }
 
 
 void MainWindow::newuser()
 {
-    if (server_status != 1)
-        return;
-
     qDebug() << QString::fromUtf8("У нас новое соединение!");
     ui->textinfo->append(QString::fromUtf8("У нас новое соединение!"));
     QTcpSocket* clientSocket=tcpServer->nextPendingConnection();
@@ -79,43 +73,24 @@ QString MainWindow::generateString(int size) {
 void MainWindow::slotReadClient()
 {
     QTcpSocket* clientSocket = (QTcpSocket*)sender();
-    int idusersocs=clientSocket->socketDescriptor();
     QTextStream os(clientSocket);
     os.setAutoDetectUnicode(true);
 
     QString text = clientSocket->readAll();
-    ui->textinfo->append("От клиента: " + text + "\n\r");
+    ui->textinfo->append("От клиента: " + text + "\n");
 
     if (text == "Хочу текстовую капчу") {
-        clientSocket->write(generateString(6).toLatin1());
+        QString tmp = generateString(6);
+        qDebug() << tmp;
+        clientSocket->write(tmp.toLatin1());
     }
     else if (text == "Хочу капчу с картинками") {
         image_capcha->generate();
-        QJsonArray jsonArray;
-        for (int i = 0; i < image_capcha->gridLayout->count(); ++i) {
-            // QPushButton* button = qobject_cast<QPushButton*>(image_capcha->gridLayout->itemAt(i));
-            QPushButton* button = new QPushButton();
-            QJsonObject json;
-            json["text"] = button->text();
-            // json["row"] = image_capcha->gridLayout->row(i);
-            // json["column"] = image_capcha->gridLayout->column(i);
-            jsonArray.append(json);
-        }
-
-        //// Now, send the JSON array over the network
-        // QByteArray data;
-        // QJsonArray::iterator it = jsonArray.begin();
-        // while (it != jsonArray.end()) {
-        //     QJsonObject jsonObject = it.value().toObject();
-        //     // Serialize the object to a QByteArray
-        //     QByteArray jsonData;
-        //     QDataStream stream(&jsonData, QIODevice::WriteOnly);
-        //     stream << jsonObject;
-        //     // Send the data over the network using QtTcpServer
-        //     clientSocket->write(jsonData);
-        //     it++;
-        // }
+        image_capcha->serialize(clientSocket);
     }
-
+    // else if (text == "Хочу проверить капчу с картинками") {
+    //     qDebug() << image_capcha->need_presses;
+    //     clientSocket->write(std::to_string(image_capcha->need_presses).c_str());
+    // }
     clientSocket->flush();
 }

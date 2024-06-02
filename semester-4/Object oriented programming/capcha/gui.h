@@ -23,16 +23,16 @@ public:
     void updateCapchaDisplay(QString capchaText);
 
 private slots:
-    void on_pushButton_2_clicked();
     void on_lineEdit_returnPressed();
 
     void on_pushButton_clicked();
-
     void on_action_2_triggered();
-
     void on_action_3_triggered();
-
     void on_action_4_triggered();
+
+    void requestNewFortune();
+    void whatToRead();
+    void displayError(QAbstractSocket::SocketError socketError);
 
 private:
     Ui::gui *ui;
@@ -40,5 +40,10 @@ private:
     ImageCapcha *image_capcha;
     ErrorHandler error_handler;
     QTcpSocket* socket;
+    QDataStream in;
+
+signals:
+    void readTextCapcha();
+    void readImageCapcha();
 };
 #endif // GUI_H
