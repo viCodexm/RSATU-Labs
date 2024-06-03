@@ -88,9 +88,5 @@ void MainWindow::slotReadClient()
         image_capcha->generate();
         image_capcha->serialize(clientSocket);
     }
-    // else if (text == "Хочу проверить капчу с картинками") {
-    //     qDebug() << image_capcha->need_presses;
-    //     clientSocket->write(std::to_string(image_capcha->need_presses).c_str());
-    // }
     clientSocket->flush();
 }

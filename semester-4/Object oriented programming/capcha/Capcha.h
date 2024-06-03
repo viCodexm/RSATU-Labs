@@ -14,6 +14,7 @@ public:
     virtual void generateOnServer(QTcpSocket* socket, QDataStream& in) = 0;
 
     void callPopup() const;
+    void callPopup(QString message) const;
     QString generateString(int size) const;
     QImage addNoise(QImage image) const;
     QImage addBlur(QImage image) const;

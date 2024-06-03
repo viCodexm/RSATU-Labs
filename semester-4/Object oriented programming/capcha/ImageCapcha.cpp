@@ -99,12 +99,21 @@ void ImageCapcha::generateOnServer(QTcpSocket* socket, QDataStream& in)
 {
     in.startTransaction();
 
+    if (!totalBytesToGet) {
+        socket->read((char*)&totalBytesToGet, sizeof(totalBytesToGet));
+        qDebug() << "Total bytes to send: " << totalBytesToGet;
+    }
+    if (!validationKey) {
+        socket->read((char*)&validationKey, sizeof(validationKey));
+        qDebug() << "Need to press: " << validationKey;
+        need_presses = validationKey;
+    }
+
     accumulative_data.append(socket->readAll());
     qDebug() << accumulative_data.size();
 
-    if (accumulative_data.size() > 200000) {
-        qDebug() << "hello";
-    } else return;
+    if (accumulative_data.size() < totalBytesToGet)
+        return;
 
     clearGrid();
 
@@ -128,6 +137,7 @@ void ImageCapcha::generateOnServer(QTcpSocket* socket, QDataStream& in)
         }
     }
     qDebug() << "Done!   need_presses: " << need_presses;
+    totalBytesToGet = validationKey = current_presses = 0;
     in.abortTransaction();
     accumulative_data.clear();
 }
@@ -146,10 +156,13 @@ void ImageCapcha::serialize(QTcpSocket* socket)
     }
     qDebug() << data.size() << "need_presses: " << need_presses;
 
-    qint64 bytesWritten = 0;
-    qint64 bytesToWrite = data.size();
+    qint32 bytesWritten = 0;
+    qint32 bytesToWrite = data.size();
+    socket->write(reinterpret_cast<const char*>(&bytesToWrite), sizeof(bytesToWrite));
+    qint32 validationKey = need_presses;
+    socket->write(reinterpret_cast<const char*>(&validationKey), sizeof(validationKey));
     while (bytesWritten < bytesToWrite) {
-        qint64 chunkSize = qMin(qint64(65536), bytesToWrite - bytesWritten);
+        qint32 chunkSize = qMin(qint32(65536), bytesToWrite - bytesWritten);
         qDebug() << chunkSize;
         socket->write(data.mid(bytesWritten, chunkSize));
         bytesWritten += chunkSize;

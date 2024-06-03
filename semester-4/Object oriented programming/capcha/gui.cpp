@@ -15,7 +15,7 @@ gui::gui(QWidget *parent)
     in.setDevice(socket);
     connect(ui->getFortuneButton, &QAbstractButton::clicked, this, &gui::requestNewFortune);
     connect(socket, &QIODevice::readyRead, this, &gui::whatToRead);
-    // connect(socket, &QAbstractSocket::errorOccurred, this, &gui::displayError);
+    connect(socket, &QAbstractSocket::errorOccurred, this, &gui::displayError, Qt::QueuedConnection);
 
     ui->label->hide();
     ui->tabWidget->setCurrentIndex(0);
@@ -27,17 +27,10 @@ gui::gui(QWidget *parent)
     } catch (const std::exception& error) {
         error_handler.callErrorPopup(error.what());
     }
-
-    text_capcha->generateOnServer(socket, in);
     ui->verticalLayout->addWidget(text_capcha);
 
     image_capcha = new ImageCapcha(this);
-    try {
-        requestNewFortune();
-    } catch (const std::exception& error) {
-        error_handler.callErrorPopup(error.what());
-    }
-
+    image_capcha->generate();
     image_capcha->show();
     ui->verticalLayout->addWidget(image_capcha);
 }
@@ -132,16 +125,14 @@ void gui::on_lineEdit_returnPressed()
 
 void gui::on_pushButton_clicked()
 {
-    requestNewFortune();
     if (ui->tabWidget->currentWidget() == ui->tab) {
         text_capcha->callPopup();
-        text_capcha->generateOnServer(socket, in);
     }
     else {
         image_capcha->callPopup();
-        image_capcha->generateOnServer(socket, in);
     }
     ui->lineEdit->clear();
+    requestNewFortune();
 }
 
 

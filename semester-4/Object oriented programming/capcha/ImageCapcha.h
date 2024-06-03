@@ -19,7 +19,9 @@ private:
     QVector<QString> imagesPool;
     const int max_images = 12, max_column = 4;
     int current_presses = 0;
-    QByteArray accumulative_data;
+    QByteArray accumulative_data = NULL;
+    qint32 totalBytesToGet = 0;
+    qint32 validationKey = 0;
 
 
     void setButtonStyle(QPushButton* button, bool selected);

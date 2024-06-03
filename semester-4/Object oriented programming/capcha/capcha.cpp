@@ -18,6 +18,10 @@ void Capcha::callPopup() const {
     }
 }
 
+void Capcha::callPopup(QString message) const {
+    QMessageBox infoBox(QMessageBox::Information, "Сообщение", message);
+    infoBox.exec();
+}
 
 QString Capcha::generateString(int size) const {
     QString allowed_symbols = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_!@~$^&*";
